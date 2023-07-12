@@ -10,9 +10,7 @@ public class Film {
             allocationSize = 1,
             initialValue = 1)
     @Id
-    @GeneratedValue(
-            strategy=GenerationType.TABLE,
-            generator="yourTableGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "not empty")
     private String title;

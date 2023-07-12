@@ -9,14 +9,9 @@ import java.util.Set;
 
 @Entity
 public class User {
-    @TableGenerator(
-            name = "yourTableGenerator",
-            allocationSize = 1,
-            initialValue = 1)
+
     @Id
-    @GeneratedValue(
-            strategy=GenerationType.TABLE,
-            generator="yourTableGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     @NotEmpty(message = "not empty")
