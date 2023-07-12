@@ -19,6 +19,11 @@
   </div>
   <br/>
   <hr/>
+  <div class="conteiner mt-2" th:each="film: ${watchedfilms}">
+    <p><a th:href="@{/films/{id}(id=${film.getId()})}" th:text="${film.getTitle}">user</a></p>
+  </div>
+  <br/>
+  <hr/>
 <form th:action="@{/users/{id}/edit(id=${user.getId()})}" method="get">
   <button type="submit">Edit</button>
 </form>

@@ -34,7 +34,6 @@ public class JdbcUserDetailsService extends MappingSqlQuery<UserDetails> impleme
         return User.builder()
                 .username(rs.getString("username"))
                 .password(rs.getString("password"))
-                //.authorities(((String[])rs.getArray("roles").getArray()))
                 .authorities(rs.getString("roles"))
                 .build();
     }

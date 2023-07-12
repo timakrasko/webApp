@@ -3,7 +3,6 @@ package com.project.webApp.controllers;
 import com.project.webApp.models.Film;
 import com.project.webApp.repository.FilmRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,8 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 
 public class FilmController {
-    @Autowired
-    private FilmRepository filmRepository;
+    private final FilmRepository filmRepository;
+
+    public FilmController(FilmRepository filmRepository) {
+        this.filmRepository = filmRepository;
+    }
+
     @GetMapping("/films")
     public String films(Model model){
         Iterable<Film> films = filmRepository.findAll();
@@ -69,6 +72,5 @@ public class FilmController {
         filmRepository.deleteById(id);
         return "redirect:/films";
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.project.webApp.controllers;
 
 import com.project.webApp.models.Film;
 import com.project.webApp.models.User;
+import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
@@ -24,11 +25,15 @@ public class UserController {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     private final UserRepository userRepository;
+    private final FilmRepository filmRepository;
     private final UserService userService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository,
+                          UserService userService,
+                          FilmRepository filmRepository) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.filmRepository = filmRepository;
     }
 
     @GetMapping()
@@ -42,6 +47,8 @@ public class UserController {
         model.addAttribute("user", user);
         List<User> friends = user.getFriends();
         model.addAttribute("friends", friends);
+        List<Film> watcehdfilms = user.getWatchedFilmList();
+        model.addAttribute("watchedfilms", watcehdfilms);
         return "users/show";
     }
     @GetMapping("/new")
@@ -90,11 +97,19 @@ public class UserController {
         return "redirect:/users";
     }
 
-//    @PostMapping("/{id}/addFilm")
-//    public String addFilm(@PathVariable Long filmId,
-//                          Model model){
-//        return "redirect:/users";
-//    }
+    @PostMapping("{filmId}/addtowatchedlist")
+    public String addToWatchedList(@PathVariable Long filmId,
+                                   @AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        Long id = user.getId();
+        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Фільм не знайдений"));
+        if(user.getWatchedFilmList().contains(film))
+            return "redirect:/films";
+        userService.addFilmToWatchedList(id, filmId);
+        return "redirect:/films";
+    }
+
     @GetMapping("/hello")
     public String hello(Model model, @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();

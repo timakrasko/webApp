@@ -32,9 +32,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "friend_id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "friend_id"}))
     private List<User> friends;
-//    @OneToMany
-//    @JoinColumn(name = "user_id")
-//    private List<Film> films;
+    @ManyToMany
+    private List<Film> watchedFilmList;
 
 
     public User(Long id, String username) {
@@ -80,14 +79,15 @@ public class User {
         return roles;
     }
 
+    public List<Film> getWatchedFilmList() {
+        return watchedFilmList;
+    }
+
+    public void setWatchedFilmList(List<Film> watchedFilmList) {
+        this.watchedFilmList = watchedFilmList;
+    }
+
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-    //    public List<Film> getFilms() {
-//        return films;
-//    }
-//
-//    public void setFilms(List<Film> films) {
-//        this.films = films;
-//    }
 }
