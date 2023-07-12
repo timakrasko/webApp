@@ -5,6 +5,9 @@ import com.project.webApp.models.User;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -87,4 +90,9 @@ public class UserController {
 //                          Model model){
 //        return "redirect:/users";
 //    }
+    @GetMapping("/hello")
+    public String hello(Model model, @AuthenticationPrincipal UserDetails userDetails){
+        model.addAttribute("name", userDetails.getUsername());
+        return "hello";
+    }
 }

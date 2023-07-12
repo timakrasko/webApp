@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -18,7 +19,12 @@ public class User {
             generator="yourTableGenerator")
     private Long id;
     @NotEmpty(message = "not empty")
-    private String name;
+    private String username;
+    private String password;
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name ="user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
     @ManyToMany
     @JoinTable(name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -30,9 +36,9 @@ public class User {
 //    private List<Film> films;
 
 
-    public User(Long id, String name) {
+    public User(Long id, String username) {
         this.id = id;
-        this.name = name;
+        this.username = username;
     }
     public User(){
 
@@ -45,12 +51,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public List<User> getFriends() {
@@ -61,7 +67,22 @@ public class User {
         this.friends = friends;
     }
 
-//    public List<Film> getFilms() {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+    //    public List<Film> getFilms() {
 //        return films;
 //    }
 //

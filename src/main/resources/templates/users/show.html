@@ -10,12 +10,12 @@
 <br>
 <br>
 <div class="conteiner mt-2">
-<p th:text="${user.name}">VALUE</p>
+<p th:text="${user.username}">VALUE</p>
 <p th:text="${user.id}">VALUE</p>
   <br/>
   <hr/>
   <div class="conteiner mt-2" th:each="friend: ${friends}">
-    <p><a th:href="@{/users/{id}(id=${friend.getId()})}" th:text="${friend.getName}">user</a></p>
+    <p><a th:href="@{/users/{id}(id=${friend.getId()})}" th:text="${friend.getUsername}">user</a></p>
   </div>
   <br/>
   <hr/>
