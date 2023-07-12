@@ -18,6 +18,7 @@ public class User {
             strategy=GenerationType.TABLE,
             generator="yourTableGenerator")
     private Long id;
+    @Column(unique = true)
     @NotEmpty(message = "not empty")
     private String username;
     private String password;

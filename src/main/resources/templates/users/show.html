@@ -28,8 +28,8 @@
 <form th:action="@{/users}" method="get">
   <button type="submit">Back</button>
 </form>
-  <form th:method="POST" th:action="@{/users/2/friends/3}" class="conteiner mt-2">
-    <input type="submit" value="Create">
+  <form th:method="POST" th:action="@{/users/{id}/addfriend(id=${user.getId()})}" class="conteiner mt-2">
+    <input type="submit" value="Add friend">
   </form>
 </div>
 </body>

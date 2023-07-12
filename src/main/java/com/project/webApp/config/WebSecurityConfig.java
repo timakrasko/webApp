@@ -31,28 +31,6 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("user")
-//                        .password("password")
-//                        .roles("USER")
-//                        .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
-//    @Bean
-//    InMemoryUserDetailsManager user(){
-//        return new InMemoryUserDetailsManager(
-//                User.withUsername("user")
-//                        .password("{noop}pass")
-//                        .roles("USER")
-//                        .build()
-//        );
-//    }
-
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource){
         return new JdbcUserDetailsService(dataSource);

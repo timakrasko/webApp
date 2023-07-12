@@ -13,8 +13,11 @@
 <form th:method="POST" th:action="@{/users}" th:object="${user}" class="conteiner mt-2">
   <lable for="name">Enter name</lable>
   <input type="text" th:field="*{username}" id="username"/>
+  <lable for="name">Enter password</lable>
+  <input type="text" th:field="*{password}" id="password"/>
   <input type="submit" value="Create">
   <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</div>
+  <div style="color:red" th:if="${not_unique_name}" th:text="${not_unique_name}">Name Error</div>
 </form>
 </body>
 </html>

@@ -13,6 +13,8 @@
 <form method="post" th:action="@{/users/{id}(id=${user.getId()})}" th:object="${user}" class="conteiner mt-2">
   <lable for="name">Enter name</lable>
   <input type="text" th:field="*{username}" id="username"/>
+  <lable for="name">Enter password</lable>
+  <input type="text" th:field="*{password}" id="password"/>
   <input type="submit" value="Update">
   <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</div>
 </form>

@@ -5,6 +5,7 @@ import com.project.webApp.models.User;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -75,9 +77,12 @@ public class UserController {
         userRepository.deleteById(id);
         return "redirect:/users";
     }
-    @PostMapping("/{id}/friends/{friendId}")
-    public String addFriend(@PathVariable Long id, @PathVariable Long friendId){
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Користувач не знайдений"));
+    @PostMapping("/{friendId}/addfriend")
+    public String addFriend(@PathVariable Long friendId,
+                            @AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        Long id = user.getId();
         User friend = userRepository.findById(friendId).orElseThrow(() -> new IllegalArgumentException("Друг не знайдений"));
         if (user.getFriends().contains(friend))
             return "redirect:/users";
@@ -92,7 +97,10 @@ public class UserController {
 //    }
     @GetMapping("/hello")
     public String hello(Model model, @AuthenticationPrincipal UserDetails userDetails){
-        model.addAttribute("name", userDetails.getUsername());
+        String name = userDetails.getUsername();
+        model.addAttribute("name", name);
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        Long id = user.getId();
         return "hello";
     }
 }
