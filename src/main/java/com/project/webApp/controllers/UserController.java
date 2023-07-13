@@ -1,6 +1,7 @@
 package com.project.webApp.controllers;
 
 import com.project.webApp.models.Film;
+import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
@@ -68,6 +69,7 @@ public class UserController {
     public String edit(@PathVariable("id") Long id, Model model){
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Користувач не знайдений"));
         model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
         return "users/edit";
     }
     @PostMapping("/{id}")
