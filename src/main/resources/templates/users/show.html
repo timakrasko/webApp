@@ -19,8 +19,9 @@
   </div>
   <br/>
   <hr/>
-  <div class="conteiner mt-2" th:each="film: ${watchedfilms}">
-    <p><a th:href="@{/films/{id}(id=${film.getId()})}" th:text="${film.getTitle}">user</a></p>
+  <div class="conteiner mt-2" th:each="film : ${watchedfilms}">
+    <tr><a th:href="@{/films/{id}(id=${film.key.getId()})}" th:text="${film.key.getTitle}"></a></tr>
+    <tr th:text="${film.value}"></tr>
   </div>
   <br/>
   <hr/>

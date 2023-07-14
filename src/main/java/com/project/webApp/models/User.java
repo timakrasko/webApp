@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -27,8 +28,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "friend_id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "friend_id"}))
     private List<User> friends;
-    @ManyToMany
-    private List<Film> watchedFilmList;
+    @ElementCollection
+    private Map<Film, Integer> watchedFilmList;
 
 
     public User(Long id, String username) {
@@ -74,11 +75,11 @@ public class User {
         return roles;
     }
 
-    public List<Film> getWatchedFilmList() {
+    public Map<Film, Integer> getWatchedFilmList() {
         return watchedFilmList;
     }
 
-    public void setWatchedFilmList(List<Film> watchedFilmList) {
+    public void setWatchedFilmList(Map<Film, Integer> watchedFilmList) {
         this.watchedFilmList = watchedFilmList;
     }
 

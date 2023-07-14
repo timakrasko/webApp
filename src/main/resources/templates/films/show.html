@@ -12,6 +12,18 @@
 <div class="conteiner mt-2">
     <p th:text="${film.title}">VALUE</p>
     <p th:text="${film.id}">VALUE</p>
+    <form th:action="@{/users/{filmId}/ratefilm(filmId=${film.getId()})}" method="post">
+        <button type="submit" name="param" value="1">1</button>
+        <button type="submit" name="param" value="2">2</button>
+        <button type="submit" name="param" value="3">3</button>
+        <button type="submit" name="param" value="4">4</button>
+        <button type="submit" name="param" value="5">5</button>
+        <button type="submit" name="param" value="6">6</button>
+        <button type="submit" name="param" value="7">7</button>
+        <button type="submit" name="param" value="8">8</button>
+        <button type="submit" name="param" value="9">9</button>
+        <button type="submit" name="param" value="10">10</button>
+    </form>
     <form th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
         <button type="submit">Edit</button>
     </form>

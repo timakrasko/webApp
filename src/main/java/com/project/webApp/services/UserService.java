@@ -7,6 +7,7 @@ import com.project.webApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -27,11 +28,20 @@ public class UserService {
     }
     public void addFilmToWatchedList(Long userId, Long filmId) {
         User user = userRepository.findById(userId).orElse(null);
-        Film movie = filmRepository.findById(filmId).orElse(null);
+        Film film = filmRepository.findById(filmId).orElse(null);
 
-        if (user != null && movie != null) {
-            List<Film> watchedMovies = user.getWatchedFilmList();
-            watchedMovies.add(movie);
+        if (user != null && film != null) {
+            Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
+            watchedFilms.put(film, -1);
+            userRepository.save(user);
+        }
+    }
+    public void raitFilm (Long userId, Long filmId, Integer value){
+        User user = userRepository.findById(userId).orElse(null);
+        Film film = filmRepository.findById(filmId).orElse(null);
+        if (user != null && film != null) {
+            Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
+            watchedFilms.put(film, value);
             userRepository.save(user);
         }
     }

@@ -17,7 +17,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Controller
@@ -48,8 +50,8 @@ public class UserController {
         model.addAttribute("user", user);
         List<User> friends = user.getFriends();
         model.addAttribute("friends", friends);
-        List<Film> watcehdfilms = user.getWatchedFilmList();
-        model.addAttribute("watchedfilms", watcehdfilms);
+        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
+        model.addAttribute("watchedfilms", watchedFilmList);
         return "users/show";
     }
     @GetMapping("/new")
@@ -106,10 +108,20 @@ public class UserController {
         User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
         Long id = user.getId();
         Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Фільм не знайдений"));
-        if(user.getWatchedFilmList().contains(film))
+        if(user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.addFilmToWatchedList(id, filmId);
         return "redirect:/films";
+    }
+    @PostMapping("/{filmId}/ratefilm")
+    public String rateFilm(@PathVariable Long filmId,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           @RequestParam("param") int value){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        Long id = user.getId();
+        userService.raitFilm(id, filmId, value);
+        return "redirect:/users";
     }
 
     @GetMapping("/hello")
