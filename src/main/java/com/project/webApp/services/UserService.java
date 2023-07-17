@@ -6,7 +6,6 @@ import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @Service

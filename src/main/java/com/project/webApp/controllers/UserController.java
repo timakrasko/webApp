@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 
 @Controller
 @RequestMapping("/users")
@@ -46,7 +43,7 @@ public class UserController {
     }
     @GetMapping("/{id}")
     public String show(@PathVariable("id") Long id, Model model){
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Користувач не знайдений"));
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
         List<User> friends = user.getFriends();
         model.addAttribute("friends", friends);
@@ -69,7 +66,7 @@ public class UserController {
     }
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Long id, Model model){
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Користувач не знайдений"));
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
         model.addAttribute("roles", Role.values());
         return "users/edit";
@@ -92,9 +89,9 @@ public class UserController {
     public String addFriend(@PathVariable Long friendId,
                             @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
-        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Long id = user.getId();
-        User friend = userRepository.findById(friendId).orElseThrow(() -> new IllegalArgumentException("Друг не знайдений"));
+        User friend = userRepository.findById(friendId).orElseThrow(() -> new IllegalArgumentException("Friend not found"));
         if (user.getFriends().contains(friend))
             return "redirect:/users";
         userService.addFriend(id, friendId);
@@ -105,9 +102,9 @@ public class UserController {
     public String addToWatchedList(@PathVariable Long filmId,
                                    @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
-        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Long id = user.getId();
-        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Фільм не знайдений"));
+        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Film not found"));
         if(user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.addFilmToWatchedList(id, filmId);
@@ -118,7 +115,7 @@ public class UserController {
                            @AuthenticationPrincipal UserDetails userDetails,
                            @RequestParam("param") int value){
         String name = userDetails.getUsername();
-        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Long id = user.getId();
         userService.raitFilm(id, filmId, value);
         return "redirect:/users";
@@ -128,7 +125,7 @@ public class UserController {
     public String hello(Model model, @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
         model.addAttribute("name", name);
-        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Long id = user.getId();
         return "hello";
     }

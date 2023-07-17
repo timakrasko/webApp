@@ -5,10 +5,6 @@ import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 public class Film {
-    @TableGenerator(
-            name = "yourTableGenerator",
-            allocationSize = 1,
-            initialValue = 1)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

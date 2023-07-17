@@ -35,7 +35,7 @@ public class FilmController {
 
     @GetMapping("films/{id}")
     public String show(@PathVariable("id") Long id, Model model){
-        Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Користувач не знайдений"));
+        Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
         return "films/show";
     }
@@ -54,7 +54,7 @@ public class FilmController {
     }
     @GetMapping("films/{id}/edit")
     public String edit(@PathVariable("id") Long id, Model model){
-        Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Фільм не знайдений"));
+        Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
         return "films/edit";
     }
