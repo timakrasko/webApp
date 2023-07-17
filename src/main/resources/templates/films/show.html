@@ -36,6 +36,9 @@
     <form th:method="POST" th:action="@{/users/{id}/addtowatchedlist(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Add film">
     </form>
+    <form th:method="POST" th:action="@{/users/{id}/deletefromwatchedlist(id=${film.getId()})}" class="conteiner mt-2">
+        <input type="submit" value="Delete film">
+    </form>
 </div>
 </body>
 </html>

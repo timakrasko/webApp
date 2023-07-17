@@ -37,6 +37,9 @@
   <form th:method="POST" th:action="@{/users/{id}/addfriend(id=${user.getId()})}" class="conteiner mt-2">
     <input type="submit" value="Add friend">
   </form>
+  <form th:method="POST" th:action="@{/users/{id}/deletefriend(id=${user.getId()})}" class="conteiner mt-2">
+    <input type="submit" value="Delete friend">
+  </form>
 </div>
 </body>
 </html>

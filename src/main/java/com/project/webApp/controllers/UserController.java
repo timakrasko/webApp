@@ -7,9 +7,7 @@ import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,8 +20,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
     private final UserService userService;
@@ -98,6 +94,19 @@ public class UserController {
         return "redirect:/users";
     }
 
+    @PostMapping("/{friendId}/deletefriend")
+    public String deleteFriend(@PathVariable Long friendId,
+                            @AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        Long id = user.getId();
+        User friend = userRepository.findById(friendId).orElseThrow(() -> new IllegalArgumentException("Friend not found"));
+        if (!user.getFriends().contains(friend))
+            return "redirect:/users";
+        userService.deleteFriend(id, friendId);
+        return "redirect:/users";
+    }
+
     @PostMapping("{filmId}/addtowatchedlist")
     public String addToWatchedList(@PathVariable Long filmId,
                                    @AuthenticationPrincipal UserDetails userDetails){
@@ -110,6 +119,20 @@ public class UserController {
         userService.addFilmToWatchedList(id, filmId);
         return "redirect:/films";
     }
+
+    @PostMapping("{filmId}/deletefromwatchedlist")
+    public String deleteFromWatchedList(@PathVariable Long filmId,
+                                   @AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        Long id = user.getId();
+        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Film not found"));
+        if(!user.getWatchedFilmList().containsKey(film))
+            return "redirect:/films";
+        userService.deleteFilmFromWatchedList(id, filmId);
+        return "redirect:/films";
+    }
+
     @PostMapping("/{filmId}/ratefilm")
     public String rateFilm(@PathVariable Long filmId,
                            @AuthenticationPrincipal UserDetails userDetails,

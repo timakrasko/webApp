@@ -27,7 +27,7 @@ public class FilmController {
         return "films/index";
     }
     @GetMapping("/")
-    public String main(Model model){
+    public String mainPage(Model model){
         Iterable<Film> films = filmRepository.findAll();
         model.addAttribute("films", films);
         return "main";
