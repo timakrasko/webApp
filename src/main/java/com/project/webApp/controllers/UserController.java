@@ -38,9 +38,15 @@ public class UserController {
         return "users/index";
     }
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") Long id, Model model){
+    public String show(@PathVariable("id") Long id, Model model,
+                       @AuthenticationPrincipal UserDetails userDetails){
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
+        String name = userDetails.getUsername();
+        User autUser = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        List<User> friendList = autUser.getFriends();
+        boolean isFriend = friendList.contains(user);
+        model.addAttribute("isFriend", isFriend);
         List<User> friends = user.getFriends();
         model.addAttribute("friends", friends);
         Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();

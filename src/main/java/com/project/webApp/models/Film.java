@@ -10,6 +10,7 @@ public class Film {
     private Long id;
     @NotEmpty(message = "not empty")
     private String title;
+    private String filename;
 
     public Long getId() {
         return id;
@@ -31,8 +32,11 @@ public class Film {
 
     }
 
-    public Film(Long id, String title) {
-        this.id = id;
-        this.title = title;
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

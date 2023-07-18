@@ -3,18 +3,23 @@ package com.project.webApp.controllers;
 import com.project.webApp.models.Film;
 import com.project.webApp.repository.FilmRepository;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Controller
 
 public class FilmController {
     private final FilmRepository filmRepository;
+    @Value("${upload.path}")
+    private String uploadPath;
 
     public FilmController(FilmRepository filmRepository) {
         this.filmRepository = filmRepository;
@@ -40,15 +45,30 @@ public class FilmController {
         return "films/show";
     }
     @GetMapping("films/new")
-    public String newUser(Model model){
+    public String newFilm(Model model){
         model.addAttribute("film", new Film());
         return "films/new";
     }
     @PostMapping("/films")
     public String create(@ModelAttribute("film") @Valid Film film,
-                         BindingResult bindingResult){
+                         @RequestParam("file") MultipartFile file,
+                         BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors())
             return "films/new";
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            File uploadDir = new File(uploadPath);
+
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+
+            film.setFilename(resultFilename);
+        }
         filmRepository.save(film);
         return "redirect:/films";
     }

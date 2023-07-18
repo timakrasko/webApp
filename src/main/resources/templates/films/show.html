@@ -12,6 +12,8 @@
 <div class="conteiner mt-2">
     <p th:text="${film.title}">VALUE</p>
     <p th:text="${film.id}">VALUE</p>
+    <p th:if="${film.filename != null}"><img th:src="@{/img/{filename}(filename=${film.filename})}"></p>
+</div>
     <form th:action="@{/users/{filmId}/ratefilm(filmId=${film.getId()})}" method="post">
         <button type="submit" name="param" value="1">1</button>
         <button type="submit" name="param" value="2">2</button>
