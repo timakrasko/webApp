@@ -26,9 +26,16 @@ public class FilmController {
     }
 
     @GetMapping("/films")
-    public String films(Model model){
-        Iterable<Film> films = filmRepository.findAll();
+    public String films(@RequestParam(required = false, defaultValue = "") String filter,
+                        Model model){
+        Iterable<Film> films;
+        if (filter != null && !filter.isEmpty()) {
+            films = filmRepository.findByTitle(filter);
+        } else {
+            films = filmRepository.findAll();
+        }
         model.addAttribute("films", films);
+        model.addAttribute("filter", filter);
         return "films/index";
     }
     @GetMapping("/")
