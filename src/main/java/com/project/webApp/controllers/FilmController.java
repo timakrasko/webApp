@@ -87,9 +87,24 @@ public class FilmController {
     }
     @PostMapping("films/{id}")
     public String update(@ModelAttribute("film") @Valid Film film,
-                         BindingResult bindingResult){
+                         @RequestParam("file") MultipartFile file,
+                         BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors())
             return "films/edit";
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            File uploadDir = new File(uploadPath);
+
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+
+            film.setFilename(resultFilename);
+        }
         filmRepository.save(film);
         return "redirect:/films";
     }

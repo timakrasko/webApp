@@ -13,6 +13,8 @@
 <form th:method="POST" enctype="multipart/form-data" th:action="@{/films}" th:object="${film}" class="conteiner mt-2">
     <lable for="name">Enter title</lable>
     <input type="text" th:field="*{title}" id="title"/>
+    <lable for="name">Enter description</lable>
+    <input type="text" th:field="*{description}" id="description"/>
     <input type="file" name="file">
     <input type="submit" value="Create">
     <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>

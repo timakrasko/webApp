@@ -10,9 +10,13 @@
 <br>
 <br>
 <br>
-<form method="post" th:action="@{/films/{id}(id=${film.getId()})}" th:object="${film}" class="conteiner mt-2">
+<form th:method="POST" enctype="multipart/form-data" th:action="@{/films/{id}(id=${film.getId()})}" th:object="${film}" class="conteiner mt-2">
     <lable for="name">Enter title</lable>
     <input type="text" th:field="*{title}" id="title"/>
+    <p th:if="${film.filename != null}"><img height=200 th:src="@{/img/{filename}(filename=${film.filename})}"></p>
+    <lable for="name">Enter description</lable>
+    <input type="text" th:field="*{description}" id="description"/>
+    <input type="file" name="file">
     <input type="submit" value="Update">
     <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
 </form>
