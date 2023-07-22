@@ -20,23 +20,23 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
-
 public class FilmController {
     private final FilmRepository filmRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final FilmService filmService;
-    private final CommentRepository commentRepository;
     @Value("${upload.path}")
     private String uploadPath;
 
-    public FilmController(FilmRepository filmRepository, UserRepository userRepository, FilmService filmService, CommentRepository commentRepository) {
+    public FilmController(FilmRepository filmRepository, CommentRepository commentRepository, UserRepository userRepository, FilmService filmService) {
         this.filmRepository = filmRepository;
+        this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.filmService = filmService;
-        this.commentRepository = commentRepository;
     }
 
     @GetMapping("/films")
@@ -60,11 +60,21 @@ public class FilmController {
     }
 
     @GetMapping("films/{id}")
-    public String show(@PathVariable("id") Long id, Model model){
+    public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
+        String userName = userDetails.getUsername();
+        User user = userRepository.findByUsername(userName).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
+        boolean isWatched = watchedFilmList.containsKey(film);
+        model.addAttribute("isWatched", isWatched);
         List<Comment> comments = film.getComments();
         model.addAttribute("comments", comments);
+        Integer mark = -1;
+        if (isWatched) {
+            mark = watchedFilmList.get(film);
+        }
+        model.addAttribute("mark", mark);
         return "films/show";
     }
     @GetMapping("films/new")
@@ -130,11 +140,12 @@ public class FilmController {
         filmRepository.deleteById(id);
         return "redirect:/films";
     }
+
     @PostMapping("/films/{id}/addmessage")
     public String addmessage(@AuthenticationPrincipal UserDetails userDetails,
-                           @RequestParam String message,
-                           @PathVariable("id") Long id,
-                           Model model) {
+                             @RequestParam String message,
+                             @PathVariable("id") Long id,
+                             Model model) {
         String name = userDetails.getUsername();
         User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Comment comment = new Comment(message, user);
