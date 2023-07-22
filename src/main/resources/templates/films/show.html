@@ -42,6 +42,19 @@
     <form th:method="POST" th:action="@{/users/{id}/deletefromwatchedlist(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Delete film">
     </form>
+<br/>
+<hr/>
+<div th:if="${comments}" class="conteiner mt-2" th:each="comment: ${comments}">
+    <p th:text="${comment.message}">VALUE</p>
+    <p th:text="${comment.author.getUsername}">VALUE</p>
+    <hr/>
+</div>
+<br/>
+<hr/>
+<form th:method="POST" th:action="@{/films/{id}/addmessage(id=${film.getId})}" class="conteiner mt-2">
+    <input type="text" name="message" placeholder="Type message" />
+    <input type="submit" value="Create">
+</form>
 </div>
 </body>
 </html>

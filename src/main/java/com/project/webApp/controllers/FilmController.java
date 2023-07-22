@@ -1,9 +1,16 @@
 package com.project.webApp.controllers;
 
+import com.project.webApp.models.Comment;
 import com.project.webApp.models.Film;
+import com.project.webApp.models.User;
+import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.FilmRepository;
+import com.project.webApp.repository.UserRepository;
+import com.project.webApp.services.FilmService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,17 +19,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
 
 public class FilmController {
     private final FilmRepository filmRepository;
+    private final UserRepository userRepository;
+    private final FilmService filmService;
+    private final CommentRepository commentRepository;
     @Value("${upload.path}")
     private String uploadPath;
 
-    public FilmController(FilmRepository filmRepository) {
+    public FilmController(FilmRepository filmRepository, UserRepository userRepository, FilmService filmService, CommentRepository commentRepository) {
         this.filmRepository = filmRepository;
+        this.userRepository = userRepository;
+        this.filmService = filmService;
+        this.commentRepository = commentRepository;
     }
 
     @GetMapping("/films")
@@ -49,6 +63,8 @@ public class FilmController {
     public String show(@PathVariable("id") Long id, Model model){
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
+        List<Comment> comments = film.getComments();
+        model.addAttribute("comments", comments);
         return "films/show";
     }
     @GetMapping("films/new")
@@ -112,6 +128,18 @@ public class FilmController {
     @PostMapping("films/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         filmRepository.deleteById(id);
+        return "redirect:/films";
+    }
+    @PostMapping("/films/{id}/addmessage")
+    public String addmessage(@AuthenticationPrincipal UserDetails userDetails,
+                           @RequestParam String message,
+                           @PathVariable("id") Long id,
+                           Model model) {
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        Comment comment = new Comment(message, user);
+        commentRepository.save(comment);
+        filmService.addComment(id, comment.getId());
         return "redirect:/films";
     }
 

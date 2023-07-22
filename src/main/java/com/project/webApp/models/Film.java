@@ -3,6 +3,8 @@ package com.project.webApp.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.List;
+
 @Entity
 public class Film {
     @Id
@@ -12,6 +14,11 @@ public class Film {
     private String title;
     private String filename;
     private String description;
+    @OneToMany
+    @JoinTable(name = "film_comments",
+            joinColumns = @JoinColumn(name = "film_id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id"))
+    private List<Comment> comments;
     public Film(){
 
     }
@@ -46,5 +53,13 @@ public class Film {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
