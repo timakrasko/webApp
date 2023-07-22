@@ -34,7 +34,7 @@
 <form th:action="@{/users}" method="get">
   <button type="submit">Back</button>
 </form>
-  <form th:method="POST" th:if="${!isFriend}" th:action="@{/users/{id}/addfriend(id=${user.getId()})}" class="conteiner mt-2">
+  <form th:method="POST" th:if="${!isFriend and !isItself}" th:action="@{/users/{id}/addfriend(id=${user.getId()})}" class="conteiner mt-2">
     <input type="submit" value="Add friend">
   </form>
   <form th:method="POST" th:if="${isFriend}" th:action="@{/users/{id}/deletefriend(id=${user.getId()})}" class="conteiner mt-2">

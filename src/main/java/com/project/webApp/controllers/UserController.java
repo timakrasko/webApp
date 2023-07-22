@@ -47,6 +47,8 @@ public class UserController {
         List<User> friendList = autUser.getFriends();
         boolean isFriend = friendList.contains(user);
         model.addAttribute("isFriend", isFriend);
+        boolean isItself = user.getId().equals(autUser.getId());
+        model.addAttribute("isItself", isItself);
         List<User> friends = user.getFriends();
         model.addAttribute("friends", friends);
         Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
@@ -123,7 +125,7 @@ public class UserController {
         if(user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.addFilmToWatchedList(id, filmId);
-        return "redirect:/films";
+        return "redirect:/films/" + filmId;
     }
 
     @PostMapping("{filmId}/deletefromwatchedlist")
@@ -136,7 +138,7 @@ public class UserController {
         if(!user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.deleteFilmFromWatchedList(id, filmId);
-        return "redirect:/films";
+        return "redirect:/films/" + filmId;
     }
 
     @PostMapping("/{filmId}/ratefilm")
@@ -147,7 +149,7 @@ public class UserController {
         User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Long id = user.getId();
         userService.raitFilm(id, filmId, value);
-        return "redirect:/users";
+        return "redirect:/films/" + filmId;
     }
 
     @GetMapping("/hello")

@@ -27,6 +27,7 @@
         <button type="submit" name="param" value="9">9</button>
         <button type="submit" name="param" value="10">10</button>
     </form>
+    <p th:if="${mark} != -1" th:text="'Your mark: ' + ${mark}"></p>
     <form th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
         <button type="submit">Edit</button>
     </form>
@@ -36,10 +37,10 @@
     <form th:action="@{/films}" method="get">
         <button type="submit">Back</button>
     </form>
-    <form th:method="POST" th:action="@{/users/{id}/addtowatchedlist(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${!isWatched}" th:action="@{/users/{id}/addtowatchedlist(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Add film">
     </form>
-    <form th:method="POST" th:action="@{/users/{id}/deletefromwatchedlist(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${isWatched}" th:action="@{/users/{id}/deletefromwatchedlist(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Delete film">
     </form>
 </div>

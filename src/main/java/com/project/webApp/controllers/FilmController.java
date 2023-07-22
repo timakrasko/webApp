@@ -1,9 +1,13 @@
 package com.project.webApp.controllers;
 
 import com.project.webApp.models.Film;
+import com.project.webApp.models.User;
 import com.project.webApp.repository.FilmRepository;
+import com.project.webApp.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,17 +16,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
-
 public class FilmController {
     private final FilmRepository filmRepository;
+    private final UserRepository userRepository;
     @Value("${upload.path}")
     private String uploadPath;
 
-    public FilmController(FilmRepository filmRepository) {
+    public FilmController(FilmRepository filmRepository, UserRepository userRepository) {
         this.filmRepository = filmRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/films")
@@ -46,9 +52,19 @@ public class FilmController {
     }
 
     @GetMapping("films/{id}")
-    public String show(@PathVariable("id") Long id, Model model){
+    public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
+        String userName = userDetails.getUsername();
+        User user = userRepository.findByUsername(userName).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
+        boolean isWatched = watchedFilmList.containsKey(film);
+        model.addAttribute("isWatched", isWatched);
+        Integer mark = -1;
+        if (isWatched) {
+            mark = watchedFilmList.get(film);
+        }
+        model.addAttribute("mark", mark);
         return "films/show";
     }
     @GetMapping("films/new")
