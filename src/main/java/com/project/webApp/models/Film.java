@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Film {
@@ -19,6 +20,11 @@ public class Film {
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "comment_id"))
     private List<Comment> comments;
+    @ElementCollection(targetClass = Genres.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "film_genres",
+            joinColumns = @JoinColumn(name ="film_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Genres> genres;
     public Film(){
 
     }
@@ -61,5 +67,13 @@ public class Film {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public Set<Genres> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Set<Genres> genres) {
+        this.genres = genres;
     }
 }

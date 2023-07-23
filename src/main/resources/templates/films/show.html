@@ -13,6 +13,10 @@
     <p th:text="${film.title}">VALUE</p>
     <p th:text="${film.id}">VALUE</p>
     <p th:if="${film.filename != null}"><img height=200 th:src="@{/img/{filename}(filename=${film.filename})}"></p>
+    <span th:each="genre: ${genres}">
+        <span th:text="${genre}"></span>
+        <span th:if="${!genreStat.last}">, </span>
+    </span>
     <p th:text="${film.description}">VALUE</p>
 </div>
     <form th:action="@{/users/{filmId}/ratefilm(filmId=${film.getId()})}" method="post">

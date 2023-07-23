@@ -14,6 +14,10 @@
     <lable for="name">Enter title</lable>
     <input type="text" th:field="*{title}" id="title"/>
     <lable for="name">Enter description</lable>
+    <div th:each="genre: ${genres}">
+        <input type="checkbox" th:field="*{genres}" th:value="${genre}" />
+        <label th:text="${genre}"></label>
+    </div>
     <input type="text" th:field="*{description}" id="description"/>
     <input type="file" name="file">
     <input type="submit" value="Create">

@@ -1,8 +1,6 @@
 package com.project.webApp.controllers;
 
-import com.project.webApp.models.Comment;
-import com.project.webApp.models.Film;
-import com.project.webApp.models.User;
+import com.project.webApp.models.*;
 import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
@@ -21,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Controller
@@ -70,6 +69,8 @@ public class FilmController {
         model.addAttribute("isWatched", isWatched);
         List<Comment> comments = film.getComments();
         model.addAttribute("comments", comments);
+        Set<Genres> genres = film.getGenres();
+        model.addAttribute("genres", genres);
         Integer mark = -1;
         if (isWatched) {
             mark = watchedFilmList.get(film);
@@ -80,6 +81,7 @@ public class FilmController {
     @GetMapping("films/new")
     public String newFilm(Model model){
         model.addAttribute("film", new Film());
+        model.addAttribute("genres", Genres.values());
         return "films/new";
     }
     @PostMapping("/films")
@@ -109,6 +111,7 @@ public class FilmController {
     public String edit(@PathVariable("id") Long id, Model model){
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
+        model.addAttribute("genres", Genres.values());
         return "films/edit";
     }
     @PostMapping("films/{id}")
