@@ -31,6 +31,11 @@ public class User {
     private List<User> friends;
     @ElementCollection
     private Map<Film, Integer> watchedFilmList;
+    @ManyToMany
+    @JoinTable(joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "film_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "film_id"}))
+    private List<Film> planedFilmList;
 
     public User(){
 
@@ -81,5 +86,13 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<Film> getPlanedFilmList() {
+        return planedFilmList;
+    }
+
+    public void setPlanedFilmList(List<Film> planedFilmList) {
+        this.planedFilmList = planedFilmList;
     }
 }

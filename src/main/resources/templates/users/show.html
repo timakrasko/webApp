@@ -14,14 +14,22 @@
 <p th:text="${user.id}">VALUE</p>
   <br/>
   <hr/>
+  <p>Friends</p>
   <div class="conteiner mt-2" th:each="friend: ${friends}">
     <p><a th:href="@{/users/{id}(id=${friend.getId()})}" th:text="${friend.getUsername}">user</a></p>
   </div>
   <br/>
   <hr/>
-  <div class="conteiner mt-2" th:each="film : ${watchedfilms}">
+  <p>Watched List</p>
+  <div class="conteiner mt-2" th:each="film : ${watchedFilms}">
     <tr><a th:href="@{/films/{id}(id=${film.key.getId()})}" th:text="${film.key.getTitle}"></a></tr>
     <tr th:text="${film.value}"></tr>
+  </div>
+  <br/>
+  <hr/>
+  <p>Planed List</p>
+  <div class="conteiner mt-2" th:each="film : ${planedFilms}">
+    <tr><a th:href="@{/films/{id}(id=${film.getId()})}" th:text="${film.getTitle}"></a></tr>
   </div>
   <br/>
   <hr/>

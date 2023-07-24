@@ -52,7 +52,9 @@ public class UserController {
         List<User> friends = user.getFriends();
         model.addAttribute("friends", friends);
         Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
-        model.addAttribute("watchedfilms", watchedFilmList);
+        model.addAttribute("watchedFilms", watchedFilmList);
+        List<Film> planedFilmList = user.getPlanedFilmList();
+        model.addAttribute("planedFilms", planedFilmList);
         return "users/show";
     }
     @GetMapping("/new")
@@ -138,6 +140,30 @@ public class UserController {
         if(!user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.deleteFilmFromWatchedList(id, filmId);
+        return "redirect:/films/" + filmId;
+    }
+    @PostMapping("{filmId}/addtoplanedlist")
+    public String addToPlanedList(@PathVariable Long filmId,
+                                   @AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        Long id = user.getId();
+        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Фільм не знайдений"));
+        if(user.getPlanedFilmList().contains(film))
+            return "redirect:/films";
+        userService.addFilmToPlanedList(id, filmId);
+        return "redirect:/films/" + filmId;
+    }
+    @PostMapping("{filmId}/deletefromplanedlist")
+    public String deleteFromPlanedList(@PathVariable Long filmId,
+                                  @AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("Користувач не знайдений"));
+        Long id = user.getId();
+        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Фільм не знайдений"));
+        if(!user.getPlanedFilmList().contains(film))
+            return "redirect:/films";
+        userService.deleteFilmFromPlanedList(id, filmId);
         return "redirect:/films/" + filmId;
     }
 
