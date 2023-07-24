@@ -67,6 +67,9 @@ public class FilmController {
         Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
         boolean isWatched = watchedFilmList.containsKey(film);
         model.addAttribute("isWatched", isWatched);
+        List<Film> planedFilmList = user.getPlanedFilmList();
+        boolean isPlaned = planedFilmList.contains(film);
+        model.addAttribute("isPlaned", isPlaned);
         List<Comment> comments = film.getComments();
         model.addAttribute("comments", comments);
         Set<Genres> genres = film.getGenres();
