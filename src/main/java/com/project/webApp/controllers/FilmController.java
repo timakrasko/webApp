@@ -64,8 +64,8 @@ public class FilmController {
         model.addAttribute("film", film);
         String userName = userDetails.getUsername();
         User user = userRepository.findByUsername(userName).orElseThrow(()-> new IllegalArgumentException("User not found"));
-        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
-        boolean isWatched = watchedFilmList.containsKey(film);
+        List<UserWatchedFilm> watchedFilmList = user.getWatchedFilmList();
+        boolean isWatched = watchedFilmList.contains(film);
         model.addAttribute("isWatched", isWatched);
         List<Film> planedFilmList = user.getPlanedFilmList();
         boolean isPlaned = planedFilmList.contains(film);
@@ -76,7 +76,7 @@ public class FilmController {
         model.addAttribute("genres", genres);
         Integer mark = -1;
         if (isWatched) {
-            mark = watchedFilmList.get(film);
+            mark = watchedFilmList.get(id.intValue()).getRate();
         }
         model.addAttribute("mark", mark);
         return "films/show";

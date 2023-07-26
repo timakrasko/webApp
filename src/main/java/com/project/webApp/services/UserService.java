@@ -2,6 +2,7 @@ package com.project.webApp.services;
 
 import com.project.webApp.models.Film;
 import com.project.webApp.models.User;
+import com.project.webApp.models.UserWatchedFilm;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -37,8 +38,11 @@ public class UserService {
         User user = userRepository.findById(userId).orElse(null);
         Film film = filmRepository.findById(filmId).orElse(null);
         if (user != null && film != null) {
-            Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
-            watchedFilms.put(film, -1);
+            UserWatchedFilm userWatchedFilm = new UserWatchedFilm();
+            userWatchedFilm.setUser(user);
+            userWatchedFilm.setFilm(film);
+            userWatchedFilm.setRate(-1);
+            user.getWatchedFilmList().add(userWatchedFilm);
             userRepository.save(user);
         }
     }
@@ -47,7 +51,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElse(null);
         Film film = filmRepository.findById(filmId).orElse(null);
         if (user != null && film != null) {
-            Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
+            List<UserWatchedFilm> watchedFilms = user.getWatchedFilmList();
             watchedFilms.remove(film);
             userRepository.save(user);
         }
@@ -76,8 +80,11 @@ public class UserService {
         User user = userRepository.findById(userId).orElse(null);
         Film film = filmRepository.findById(filmId).orElse(null);
         if (user != null && film != null) {
-            Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
-            watchedFilms.put(film, value);
+            UserWatchedFilm userWatchedFilm = user.getWatchedFilmList().stream()
+                    .filter(watchedFilm -> watchedFilm.getFilm().getId().equals(filmId))
+                    .findFirst()
+                    .orElse(null);
+            userWatchedFilm.setRate(value);
             userRepository.save(user);
         }
     }

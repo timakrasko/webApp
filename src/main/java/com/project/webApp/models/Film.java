@@ -25,6 +25,8 @@ public class Film {
             joinColumns = @JoinColumn(name ="film_id"))
     @Enumerated(EnumType.STRING)
     private Set<Genres> genres;
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserWatchedFilm> watchedFilmList;
     public Film(){
 
     }
@@ -75,5 +77,13 @@ public class Film {
 
     public void setGenres(Set<Genres> genres) {
         this.genres = genres;
+    }
+
+    public List<UserWatchedFilm> getWatchedFilmList() {
+        return watchedFilmList;
+    }
+
+    public void setWatchedFilmList(List<UserWatchedFilm> watchedFilmList) {
+        this.watchedFilmList = watchedFilmList;
     }
 }

@@ -3,6 +3,9 @@ package com.project.webApp.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 import java.util.Map;
@@ -29,8 +32,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "friend_id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "friend_id"}))
     private List<User> friends;
-    @ElementCollection
-    private Map<Film, Integer> watchedFilmList;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserWatchedFilm> watchedFilmList;
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "film_id"),
@@ -76,14 +79,6 @@ public class User {
         return roles;
     }
 
-    public Map<Film, Integer> getWatchedFilmList() {
-        return watchedFilmList;
-    }
-
-    public void setWatchedFilmList(Map<Film, Integer> watchedFilmList) {
-        this.watchedFilmList = watchedFilmList;
-    }
-
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
@@ -94,5 +89,13 @@ public class User {
 
     public void setPlanedFilmList(List<Film> planedFilmList) {
         this.planedFilmList = planedFilmList;
+    }
+
+    public List<UserWatchedFilm> getWatchedFilmList() {
+        return watchedFilmList;
+    }
+
+    public void setWatchedFilmList(List<UserWatchedFilm> watchedFilmList) {
+        this.watchedFilmList = watchedFilmList;
     }
 }
