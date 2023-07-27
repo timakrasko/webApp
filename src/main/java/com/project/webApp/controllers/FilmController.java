@@ -143,6 +143,7 @@ public class FilmController {
 
     @PostMapping("films/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
+        filmService.deleteFilmFromWatchList(id);
         filmRepository.deleteById(id);
         return "redirect:/films";
     }
