@@ -5,6 +5,7 @@ import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
+import com.project.webApp.services.FilmService;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,13 +24,15 @@ public class UserController {
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
     private final UserService userService;
+    private final FilmService filmService;
 
     public UserController(UserRepository userRepository,
                           UserService userService,
-                          FilmRepository filmRepository) {
+                          FilmRepository filmRepository, FilmService filmService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.filmRepository = filmRepository;
+        this.filmService = filmService;
     }
 
     @GetMapping()
@@ -173,8 +176,11 @@ public class UserController {
                            @RequestParam("param") int value){
         String name = userDetails.getUsername();
         User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Film not found"));
         Long id = user.getId();
         userService.raitFilm(id, filmId, value);
+        film.setRating(filmService.avrRateFilm(filmId));
+        filmRepository.save(film);
         return "redirect:/films/" + filmId;
     }
 

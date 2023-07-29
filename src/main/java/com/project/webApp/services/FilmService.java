@@ -33,4 +33,8 @@ public class FilmService {
         String sql = "DELETE FROM user_watched_film_list WHERE watched_film_list_key = ?";
         jdbcTemplate.update(sql, id);
     }
+    public double avrRateFilm(Long id) {
+        String sql = "SELECT AVG(watched_film_list) FROM user_watched_film_list WHERE watched_film_list_key = ?";
+        return jdbcTemplate.queryForObject(sql, Double.class, id);
+    }
 }

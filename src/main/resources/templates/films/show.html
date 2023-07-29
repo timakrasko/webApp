@@ -13,6 +13,7 @@
     <p th:text="${film.title}">VALUE</p>
     <p th:text="${film.id}">VALUE</p>
     <p th:if="${film.filename != null}"><img height=200 th:src="@{/img/{filename}(filename=${film.filename})}"></p>
+    <p th:text = ${film.showRating}>VALUE</p>
     <span th:each="genre: ${genres}">
         <span th:text="${genre}"></span>
         <span th:if="${!genreStat.last}">, </span>

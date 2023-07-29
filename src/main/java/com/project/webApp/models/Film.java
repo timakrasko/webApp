@@ -3,6 +3,7 @@ package com.project.webApp.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ public class Film {
     private String title;
     private String filename;
     private String description;
+    private double rating;
     @OneToMany
     @JoinTable(name = "film_comments",
             joinColumns = @JoinColumn(name = "film_id"),
@@ -27,6 +29,10 @@ public class Film {
     private Set<Genres> genres;
     public Film(){
 
+    }
+    public String showRating(){
+        String formattedDouble = new DecimalFormat("#0.0").format(rating);
+        return formattedDouble;
     }
 
     public Long getId() {
@@ -75,5 +81,13 @@ public class Film {
 
     public void setGenres(Set<Genres> genres) {
         this.genres = genres;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }
