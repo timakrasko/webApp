@@ -6,6 +6,7 @@ import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,20 +24,15 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller
+@RequiredArgsConstructor
 public class FilmController {
     private final FilmRepository filmRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final FilmService filmService;
+
     @Value("${upload.path}")
     private String uploadPath;
-
-    public FilmController(FilmRepository filmRepository, CommentRepository commentRepository, UserRepository userRepository, FilmService filmService) {
-        this.filmRepository = filmRepository;
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.filmService = filmService;
-    }
 
     @GetMapping("/films")
     public String films(@RequestParam(required = false, defaultValue = "") String filter,

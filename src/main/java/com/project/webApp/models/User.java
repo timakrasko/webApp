@@ -3,12 +3,14 @@ package com.project.webApp.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @Entity
+@Data
 public class User {
 
     @Id
@@ -38,61 +40,5 @@ public class User {
     private List<Film> planedFilmList;
 
     public User(){
-
-    }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public List<User> getFriends() {
-        return friends;
-    }
-
-    public void setFriends(List<User> friends) {
-        this.friends = friends;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public Map<Film, Integer> getWatchedFilmList() {
-        return watchedFilmList;
-    }
-
-    public void setWatchedFilmList(Map<Film, Integer> watchedFilmList) {
-        this.watchedFilmList = watchedFilmList;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Film> getPlanedFilmList() {
-        return planedFilmList;
-    }
-
-    public void setPlanedFilmList(List<Film> planedFilmList) {
-        this.planedFilmList = planedFilmList;
     }
 }

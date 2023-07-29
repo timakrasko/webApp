@@ -8,6 +8,7 @@ import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -19,21 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
     private final UserService userService;
     private final FilmService filmService;
-
-    public UserController(UserRepository userRepository,
-                          UserService userService,
-                          FilmRepository filmRepository, FilmService filmService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-        this.filmRepository = filmRepository;
-        this.filmService = filmService;
-    }
 
     @GetMapping()
     public String index(Model model){
