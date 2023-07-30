@@ -87,7 +87,7 @@ public class UserController {
         userRepository.deleteById(id);
         return "redirect:/users";
     }
-    @PostMapping("/{friendId}/addfriend")
+    @PostMapping("/{friendId}/add_friend")
     public String addFriend(@PathVariable Long friendId,
                             @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
@@ -100,7 +100,7 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @PostMapping("/{friendId}/deletefriend")
+    @PostMapping("/{friendId}/delete_friend")
     public String deleteFriend(@PathVariable Long friendId,
                             @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
@@ -113,7 +113,7 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @PostMapping("{filmId}/addtowatchedlist")
+    @PostMapping("{filmId}/add_to_watched_list")
     public String addToWatchedList(@PathVariable Long filmId,
                                    @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
@@ -126,7 +126,7 @@ public class UserController {
         return "redirect:/films/" + filmId;
     }
 
-    @PostMapping("{filmId}/deletefromwatchedlist")
+    @PostMapping("{filmId}/delete_from_watched_list")
     public String deleteFromWatchedList(@PathVariable Long filmId,
                                    @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
@@ -138,7 +138,7 @@ public class UserController {
         userService.deleteFilmFromWatchedList(id, filmId);
         return "redirect:/films/" + filmId;
     }
-    @PostMapping("{filmId}/addtoplanedlist")
+    @PostMapping("{filmId}/add_to_planed_list")
     public String addToPlanedList(@PathVariable Long filmId,
                                    @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
@@ -150,7 +150,7 @@ public class UserController {
         userService.addFilmToPlanedList(id, filmId);
         return "redirect:/films/" + filmId;
     }
-    @PostMapping("{filmId}/deletefromplanedlist")
+    @PostMapping("{filmId}/delete_from_planed_list")
     public String deleteFromPlanedList(@PathVariable Long filmId,
                                   @AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
@@ -163,7 +163,7 @@ public class UserController {
         return "redirect:/films/" + filmId;
     }
 
-    @PostMapping("/{filmId}/ratefilm")
+    @PostMapping("/{filmId}/rate_film")
     public String rateFilm(@PathVariable Long filmId,
                            @AuthenticationPrincipal UserDetails userDetails,
                            @RequestParam("param") int value){

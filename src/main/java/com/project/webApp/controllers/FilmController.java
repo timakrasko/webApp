@@ -144,8 +144,8 @@ public class FilmController {
         return "redirect:/films";
     }
 
-    @PostMapping("/films/{id}/addmessage")
-    public String addmessage(@AuthenticationPrincipal UserDetails userDetails,
+    @PostMapping("/films/{id}/add_message")
+    public String addMessage(@AuthenticationPrincipal UserDetails userDetails,
                              @RequestParam String message,
                              @PathVariable("id") Long id,
                              Model model) {
