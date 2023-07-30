@@ -39,7 +39,7 @@ public class FilmController {
                         Model model){
         Iterable<Film> films;
         if (filter != null && !filter.isEmpty()) {
-            films = filmRepository.findByTitle(filter);
+            films = filmRepository.findByTitleContainsIgnoreCase(filter);
         } else {
             films = filmRepository.findAll();
         }

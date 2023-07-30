@@ -1,16 +1,17 @@
 package com.project.webApp.models;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class User {
 
     @Id
