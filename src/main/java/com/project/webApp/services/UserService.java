@@ -33,6 +33,8 @@ public class UserService {
     public void addFilmToWatchedList(Long userId, Long filmId) {
         User user = userRepository.findById(userId).orElse(null);
         Film film = filmRepository.findById(filmId).orElse(null);
+        if (user.getPlanedFilmList().contains(film))
+            deleteFilmFromPlanedList(userId, filmId);
         if (user != null && film != null) {
             Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
             watchedFilms.put(film, -1);
@@ -69,9 +71,11 @@ public class UserService {
             userRepository.save(user);
         }
     }
-    public void raitFilm (Long userId, Long filmId, Integer value){
+    public void rateFilm (Long userId, Long filmId, Integer value){
         User user = userRepository.findById(userId).orElse(null);
         Film film = filmRepository.findById(filmId).orElse(null);
+        if (user.getPlanedFilmList().contains(film))
+            deleteFilmFromPlanedList(userId, filmId);
         if (user != null && film != null) {
             Map<Film, Integer> watchedFilms = user.getWatchedFilmList();
             watchedFilms.put(film, value);

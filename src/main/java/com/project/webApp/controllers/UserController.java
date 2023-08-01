@@ -171,7 +171,7 @@ public class UserController {
         User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Film film = filmRepository.findById(filmId).orElseThrow(()-> new IllegalArgumentException("Film not found"));
         Long id = user.getId();
-        userService.raitFilm(id, filmId, value);
+        userService.rateFilm(id, filmId, value);
         film.setRating(filmService.avrRateFilm(filmId));
         filmRepository.save(film);
         return "redirect:/films/" + filmId;
