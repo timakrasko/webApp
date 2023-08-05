@@ -4,17 +4,20 @@ import com.project.webApp.models.Film;
 import com.project.webApp.models.User;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
+
+    public UserService(UserRepository userRepository, FilmRepository filmRepository) {
+        this.userRepository = userRepository;
+        this.filmRepository = filmRepository;
+    }
 
     public void addFriend(Long userId, Long friendId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));

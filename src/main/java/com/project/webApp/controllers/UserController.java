@@ -178,11 +178,10 @@ public class UserController {
     }
 
     @GetMapping("/hello")
-    public String hello(Model model, @AuthenticationPrincipal UserDetails userDetails){
-        String name = userDetails.getUsername();
-        model.addAttribute("name", name);
-        User user = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
-        Long id = user.getId();
+    public String hello(Model model){
+        Iterable<Film> films;
+        films = filmRepository.findAll();
+        model.addAttribute("films", films);
         return "hello";
     }
 }

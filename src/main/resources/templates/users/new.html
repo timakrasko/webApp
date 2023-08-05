@@ -9,13 +9,13 @@
 <header th:insert="~{blocks/header :: header}"></header>
 <br>
 <br>
-<br>
-<form th:method="POST" th:action="@{/users}" th:object="${user}" class="conteiner mt-2">
+<form th:method="POST" th:action="@{/users}" th:object="${user}" class="container mt-4">
   <lable for="name">Enter name</lable>
-  <input type="text" th:field="*{username}" id="username"/>
+  <input type="text" th:field="*{username}" id="username" class="form-control w-25"/>
   <lable for="name">Enter password</lable>
-  <input type="password" th:field="*{password}" id="password"/>
-  <input type="submit" value="Create">
+  <input type="password" th:field="*{password}" id="password" class="form-control w-25"/>
+  <br>
+  <button type="submit" class="btn btn-primary">Create</button>
   <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</div>
   <div style="color:red" th:if="${not_unique_name}" th:text="${not_unique_name}">Name Error</div>
 </form>

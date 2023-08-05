@@ -9,17 +9,16 @@
 <header th:insert="~{blocks/header :: header}"></header>
 <br>
 <br>
-<br>
-<form method="post" th:action="@{/users/{id}(id=${user.getId()})}" th:object="${user}" class="conteiner mt-2">
+<form method="post" th:action="@{/users/{id}(id=${user.getId()})}" th:object="${user}" class="container mt-4">
   <lable for="name">Enter name</lable>
-  <input type="text" th:field="*{username}" id="username"/>
+  <input type="text" th:field="*{username}" id="username" class="form-control w-25"/>
   <lable for="name">Enter password</lable>
-  <input type="text" th:field="*{password}" id="password"/>
+  <input type="password" th:field="*{password}" id="password" class="form-control w-25"/>
   <div th:each="role: ${roles}">
     <input type="checkbox" th:field="*{roles}" th:value="${role}" />
     <label th:text="${role}"></label>
   </div>
-  <input type="submit" value="Update">
+  <button type="submit" class="btn btn-primary">Update</button>
   <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</div>
 </form>
 </body>

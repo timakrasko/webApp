@@ -8,66 +8,62 @@
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
 <br>
-<br>
-<div class="conteiner mt-2">
-    <p th:text="${film.title}">VALUE</p>
-    <p th:text="${film.id}">VALUE</p>
-    <p th:if="${film.filename != null}"><img height=200 th:src="@{/img/{filename}(filename=${film.filename})}"></p>
-    <p th:text = ${film.showRating}>VALUE</p>
+<div class="container mt-5">
+    <h4 th:text="${film.title}">Title</h4>
+    <p th:text="'ID: ' + ${film.id}">Id</p>
+    <p th:if="${film.filename != null}"><img height=300 th:src="@{/img/{filename}(filename=${film.filename})}"></p>
+    <form th:action="@{/users/{filmId}/rate_film(filmId=${film.getId()})}" method="post">
+        <button type="submit" name="param" value="1" class="btn btn-outline-warning btn-sm">1</button>
+        <button type="submit" name="param" value="2" class="btn btn-outline-warning btn-sm">2</button>
+        <button type="submit" name="param" value="3" class="btn btn-outline-warning btn-sm">3</button>
+        <button type="submit" name="param" value="4" class="btn btn-outline-warning btn-sm">4</button>
+        <button type="submit" name="param" value="5" class="btn btn-outline-warning btn-sm">5</button>
+        <button type="submit" name="param" value="6" class="btn btn-outline-warning btn-sm">6</button>
+        <button type="submit" name="param" value="7" class="btn btn-outline-warning btn-sm">7</button>
+        <button type="submit" name="param" value="8" class="btn btn-outline-warning btn-sm">8</button>
+        <button type="submit" name="param" value="9" class="btn btn-outline-warning btn-sm">9</button>
+        <button type="submit" name="param" value="10" class="btn btn-outline-warning btn-sm">10</button>
+    </form>
+    <p th:if="${mark} != -1" th:text="'Your mark: ' + ${mark}"></p>
+    <p th:text ="'Rating: ' + ${film.showRating}">Rating</p>
+    <form th:method="POST" th:if="${!isWatched}" th:action="@{/users/{id}/add_to_watched_list(id=${film.getId()})}" >
+        <button type="submit" class="btn btn-outline-primary">Add to watched</button>
+    </form>
+    <form th:method="POST" th:if="${isWatched}" th:action="@{/users/{id}/delete_from_watched_list(id=${film.getId()})}">
+        <button type="submit" class="btn btn-outline-danger">Delete film from watched</button>
+    </form>
+    <form th:method="POST" th:if="${!isPlaned && !isWatched}" th:action="@{/users/{id}/add_to_planed_list(id=${film.getId()})}">
+        <button type="submit" class="btn btn-outline-primary">Add film to plan</button>
+    </form>
+    <form th:method="POST" th:if="${isPlaned && !isWatched}" th:action="@{/users/{id}/delete_from_planed_list(id=${film.getId()})}">
+        <button type="submit" class="btn btn-outline-danger">Delete film from plan</button>
+    </form>
+    <p>Genres:
     <span th:each="genre: ${genres}">
         <span th:text="${genre}"></span>
         <span th:if="${!genreStat.last}">, </span>
     </span>
+    </p>
     <p th:text="${film.description}">VALUE</p>
-</div>
-    <form th:action="@{/users/{filmId}/ratefilm(filmId=${film.getId()})}" method="post">
-        <button type="submit" name="param" value="1">1</button>
-        <button type="submit" name="param" value="2">2</button>
-        <button type="submit" name="param" value="3">3</button>
-        <button type="submit" name="param" value="4">4</button>
-        <button type="submit" name="param" value="5">5</button>
-        <button type="submit" name="param" value="6">6</button>
-        <button type="submit" name="param" value="7">7</button>
-        <button type="submit" name="param" value="8">8</button>
-        <button type="submit" name="param" value="9">9</button>
-        <button type="submit" name="param" value="10">10</button>
-    </form>
-    <p th:if="${mark} != -1" th:text="'Your mark: ' + ${mark}"></p>
     <form th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
-        <button type="submit">Edit</button>
+        <button type="submit" class="btn btn-primary">Edit</button>
     </form>
     <form th:action="@{/films/{id}/delete(id=${film.getId()})}" method="post">
-        <button type="submit">Delete</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
     </form>
-    <form th:action="@{/films}" method="get">
-        <button type="submit">Back</button>
+    <br>
+    <h5>Comments</h5>
+    <hr>
+    <div th:if="${comments}" th:each="comment: ${comments}">
+        <p th:text="${comment.message}">Message</p>
+        <p th:text="${comment.author.getUsername}">Username</p>
+        <hr/>
+    </div>
+    <form th:method="POST" th:action="@{/films/{id}/add_message(id=${film.getId})}">
+        <input type="text" name="message" placeholder="Type message" class="form-control w-25"/>
+        <input type="submit" value="Create" class="btn btn-outline-primary">
     </form>
-    <form th:method="POST" th:if="${!isWatched}" th:action="@{/users/{id}/add_to_watched_list(id=${film.getId()})}" class="conteiner mt-2">
-        <input type="submit" value="Add film">
-    </form>
-    <form th:method="POST" th:if="${isWatched}" th:action="@{/users/{id}/delete_from_watched_list(id=${film.getId()})}" class="conteiner mt-2">
-        <input type="submit" value="Delete film">
-    </form>
-
-    <form th:method="POST" th:if="${!isPlaned && !isWatched}" th:action="@{/users/{id}/add_to_planed_list(id=${film.getId()})}" class="conteiner mt-2">
-        <input type="submit" value="Add film to plan">
-    </form>
-    <form th:method="POST" th:if="${isPlaned && !isWatched}" th:action="@{/users/{id}/delete_from_planed_list(id=${film.getId()})}" class="conteiner mt-2">
-            <input type="submit" value="Delete film from plan">
-    </form>
-<br/>
-<hr/>
-<div th:if="${comments}" class="conteiner mt-2" th:each="comment: ${comments}">
-    <p th:text="${comment.message}">VALUE</p>
-    <p th:text="${comment.author.getUsername}">VALUE</p>
-    <hr/>
 </div>
-<br/>
-<hr/>
-<form th:method="POST" th:action="@{/films/{id}/add_message(id=${film.getId})}" class="conteiner mt-2">
-    <input type="text" name="message" placeholder="Type message" />
-    <input type="submit" value="Create">
-</form>
 </div>
 </body>
 </html>
