@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
 </head>
 <body>
-<header th:insert="~{blocks/header :: header}"></header>
+<header th:insert="~{blocks/header/header :: header}"></header>
 <br>
 <br>
 <div class="conteiner mt-2">
@@ -20,7 +20,7 @@
     </span>
     <p th:text="${film.description}">VALUE</p>
 </div>
-    <form th:action="@{/users/{filmId}/ratefilm(filmId=${film.getId()})}" method="post">
+    <form th:action="@{/users/{filmId}/rate_film(filmId=${film.getId()})}" method="post">
         <button type="submit" name="param" value="1">1</button>
         <button type="submit" name="param" value="2">2</button>
         <button type="submit" name="param" value="3">3</button>

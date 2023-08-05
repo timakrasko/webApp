@@ -1,10 +1,11 @@
 package com.project.webApp.models;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;

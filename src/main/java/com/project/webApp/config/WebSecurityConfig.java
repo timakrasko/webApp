@@ -1,38 +1,47 @@
 package com.project.webApp.config;
-import com.project.webApp.services.JdbcUserDetailsService;
+import com.project.webApp.services.AuthenticationService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.SecurityFilterChain;
-
-import javax.sql.DataSource;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
+@AllArgsConstructor
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    private final AuthenticationService authenticationService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/").permitAll()
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/register", "/", "/confirm", "/users")
+                .permitAll()
+                .anyRequest()
+                .authenticated().and()
+                .formLogin();
+    }
 
-                        .anyRequest().authenticated()
-                )
-                .formLogin(Customizer.withDefaults())
-                .logout(LogoutConfigurer::permitAll);
 
-        return http.build();
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource){
-        return new JdbcUserDetailsService(dataSource);
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
+        provider.setUserDetailsService(authenticationService);
+        return provider;
     }
-
 }

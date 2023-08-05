@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<p style="color: green" th:if="${showEmailMessage}" th:text="'We sent the confirmation link to your email'"></p>
+<form th:method="POST" th:action="@{/register}" th:object="${request}">
+
+  <p>User name: <input type="text" th:field="*{userName}"></p>
+  <div style="color: darkred" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+
+  <p>Email: <input type="text" th:field="*{email}"></p>
+  <div style="color: darkred" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+  <p>Password: <input type="text" th:field="*{password}"></p>
+  <div style="color: darkred" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+  <input type="submit" value="Register">
+</form>
+<br>
+<a th:href="@{/}">To main page</a>
+</body>
+</html>

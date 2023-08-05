@@ -5,7 +5,6 @@ import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +48,16 @@ public class FilmController {
         return "films/index";
     }
     @GetMapping("/")
-    public String mainPage(Model model){
+    public String mainPage(Model model, @AuthenticationPrincipal UserDetails userDetails){
+        User authenticatedUser = new User();
+        boolean isAuthenticated = false;
+        if (userDetails != null) {
+            isAuthenticated = true;
+//            authenticatedUser = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+            System.out.println(userDetails.getUsername());
+        }
+        model.addAttribute("authenticatedUser", authenticatedUser);
+        model.addAttribute("isAuthenticated", isAuthenticated);
         Iterable<Film> films = filmRepository.findAll();
         model.addAttribute("films", films);
         return "main";

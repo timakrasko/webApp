@@ -1,13 +1,14 @@
 package com.project.webApp.controllers;
 
+import com.project.webApp.models.ConfirmationToken;
 import com.project.webApp.models.Film;
 import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
+import com.project.webApp.repository.ConfirmationTokenRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
 import com.project.webApp.services.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +27,26 @@ import java.util.Map;
 public class UserController {
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
     private final UserService userService;
     private final FilmService filmService;
 
     @GetMapping()
-    public String index(Model model){
+    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails){
         model.addAttribute("users", userRepository.findAll());
+
+        User currentUser = new User();
+        boolean isAuthenticated = false;
+        if (userDetails != null) {
+            if (userDetails.getUsername() != null) {
+                currentUser = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+                System.out.println(userDetails.getUsername());
+                isAuthenticated = true;
+            }
+        }
+
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("isAuthenticated", isAuthenticated);
         return "users/index";
     }
     @GetMapping("/{id}")
@@ -53,19 +69,7 @@ public class UserController {
         model.addAttribute("planedFilms", planedFilmList);
         return "users/show";
     }
-    @GetMapping("/new")
-    public String newUser(Model model){
-        model.addAttribute("user", new User());
-        return "users/new";
-    }
-    @PostMapping()
-    public String create(@ModelAttribute("user") @Valid User user,
-                         BindingResult bindingResult){
-        if (bindingResult.hasErrors())
-            return "users/new";
-        userRepository.save(user);
-        return "redirect:/users";
-    }
+
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Long id, Model model){
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -84,6 +88,7 @@ public class UserController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
+        confirmationTokenRepository.deleteByUser_id(id);
         userRepository.deleteById(id);
         return "redirect:/users";
     }
