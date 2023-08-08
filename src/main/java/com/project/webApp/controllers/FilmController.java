@@ -50,6 +50,8 @@ public class FilmController {
     @GetMapping("/")
     public String mainPage(Model model){
         Iterable<Film> films = filmRepository.findAll();
+        User user = userRepository.findByEmail("timakrasko2004@gmail.com").orElseThrow();
+        System.out.println(user.getPassword());
         model.addAttribute("films", films);
         return "main";
     }
