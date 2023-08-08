@@ -5,6 +5,7 @@ import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,9 +16,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -148,6 +149,15 @@ public class FilmController {
 
     @PostMapping("films/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
+        Film film = filmRepository.findById(id).orElseThrow();
+        if (film.getFilename() != null) {
+            File img = new File(uploadPath + "/" + film.getFilename());
+            if (img.exists()) {
+                boolean isDeleted = img.delete();
+                System.out.println(isDeleted);
+            }
+        }
+
         filmService.deleteFilmFromWatchList(id);
         filmRepository.deleteById(id);
         return "redirect:/films";

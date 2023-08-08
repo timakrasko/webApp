@@ -1,9 +1,8 @@
 package com.project.webApp.models;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 @Entity
 @Data

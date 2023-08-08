@@ -2,25 +2,28 @@ package com.project.webApp.controllers;
 
 import com.project.webApp.models.RegistrationRequest;
 import com.project.webApp.services.RegistrationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.*;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import java.util.Set;
 
-//import javax.validation.Valid;
 
 @Controller
 @AllArgsConstructor
 public class RegistrationController {
 
     private final RegistrationService registrationService;
+//    private final Validator validator;
 
     @GetMapping("/register")
     public String register(Model model) {
@@ -33,9 +36,11 @@ public class RegistrationController {
         if (bindingResult.hasErrors()) {
             return "register";
         }
-        System.out.println(request.getUserName());
-        System.out.println(request.getEmail());
-        System.out.println(request.getPassword());
+
+        System.out.println("User name: " + request.getUserName());
+        System.out.println("Email: " + request.getEmail());
+        System.out.println("Password: " + request.getPassword());
+        System.out.println("-------------------------------");
 
         model.addAttribute("showEmailMessage", true);
 
