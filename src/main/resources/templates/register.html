@@ -5,20 +5,22 @@
   <title>Title</title>
 </head>
 <body>
+<div class="container mt-4">
 <p style="color: green" th:if="${showEmailMessage}" th:text="'We sent the confirmation link to your email'"></p>
 <form th:method="POST" th:action="@{/register}" th:object="${request}">
 
-  <p>User name: <input type="text" th:field="*{userName}"></p>
+  <p>User name: <input type="text" th:field="*{userName}" class="form-control w-25"></p>
   <div style="color: darkred" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
 
-  <p>Email: <input type="text" th:field="*{email}"></p>
+  <p>Email: <input type="text" th:field="*{email}" class="form-control w-25"></p>
   <div style="color: darkred" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
 
-  <p>Password: <input type="text" th:field="*{password}"></p>
+  <p>Password: <input type="text" th:field="*{password}" class="form-control w-25"></p>
   <div style="color: darkred" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
   <input type="submit" value="Register">
 </form>
 <br>
 <a th:href="@{/}">To main page</a>
+</div>>
 </body>
 </html>
