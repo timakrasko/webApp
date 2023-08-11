@@ -5,6 +5,7 @@ import com.project.webApp.models.ConfirmationToken;
 import com.project.webApp.models.RegistrationRequest;
 import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
+import com.project.webApp.repository.ConfirmationTokenRepository;
 import com.project.webApp.utility.EmailSender;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ public class RegistrationService {
     private final AuthenticationService authenticationService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
     public String register(RegistrationRequest request) {
         String token = authenticationService.signUpUser(
@@ -50,6 +52,8 @@ public class RegistrationService {
                 .orElseThrow(() ->
                         new IllegalStateException("token not found"));
 
+        User user = confirmationToken.getUser();
+
         if (confirmationToken.getConfirmedAt() != null) {
             throw new IllegalStateException("email already confirmed");
         }
@@ -57,12 +61,14 @@ public class RegistrationService {
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
+            confirmationTokenRepository.deleteByToken(token);
+            throw new IllegalStateException("token expired and therefore deleted");
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        authenticationService.enableAppUser(
-                confirmationToken.getUser().getEmail());
+        authenticationService.enableAppUser(user.getEmail());
+        confirmationTokenRepository.deleteByUser_id(user.getId());
+
     }
 
     private String buildEmail(String name, String link) {

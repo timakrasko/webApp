@@ -5,6 +5,7 @@ import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -117,18 +118,24 @@ public class FilmController {
         return "redirect:/films";
     }
     @GetMapping("films/{id}/edit")
-    public String edit(@PathVariable("id") Long id, Model model){
+    public String edit(@PathVariable("id") Long id, Model model, HttpSession session){
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
+
+        String fileName = film.getFilename();
+        session.setAttribute("fileName", fileName);
+
         model.addAttribute("film", film);
         model.addAttribute("genres", Genres.values());
         return "films/edit";
     }
     @PostMapping("films/{id}")
     public String update(@ModelAttribute("film") @Valid Film film,
+                         HttpSession session,
                          @RequestParam("file") MultipartFile file,
-                         BindingResult bindingResult) throws IOException {
+                         BindingResult bindingResult, Model model) throws IOException {
         if (bindingResult.hasErrors())
             return "films/edit";
+
         if (file != null && !file.getOriginalFilename().isEmpty()) {
             File uploadDir = new File(uploadPath);
 
@@ -139,9 +146,14 @@ public class FilmController {
             String uuidFile = UUID.randomUUID().toString();
             String resultFilename = uuidFile + "." + file.getOriginalFilename();
 
+
             file.transferTo(new File(uploadPath + "/" + resultFilename));
 
             film.setFilename(resultFilename);
+        }
+
+        if (film.getFilename() == null) {
+            film.setFilename((String) session.getAttribute("fileName"));
         }
         filmRepository.save(film);
         return "redirect:/films";
