@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>User</title>
@@ -12,6 +12,7 @@
 <div class="conteiner mt-2">
 <p th:text="${user.username}">VALUE</p>
 <p th:text="${user.id}">VALUE</p>
+<p style="color: darkred" th:if="${isUserLocked}" th:text="'User blocked'">User blocked</p>
   <br/>
   <hr/>
   <p>Friends</p>
@@ -47,6 +48,13 @@
   </form>
   <form th:method="POST" th:if="${isFriend}" th:action="@{/users/{id}/delete_friend(id=${user.getId()})}" class="conteiner mt-2">
     <input type="submit" value="Delete friend">
+  </form>
+
+  <form th:method="POST" th:if="${!isUserLocked and isAutUserAdmin and !isUserAdmin}" th:action="@{/users/{id}/block(id=${user.getId()})}" class="conteiner mt-2">
+    <input type="submit" value="Block this user">
+  </form>
+  <form th:method="POST" th:if="${isUserLocked and isAutUserAdmin and !isUserAdmin}" th:action="@{/users/{id}/unblock(id=${user.getId()})}" class="conteiner mt-2">
+    <input type="submit" value="Unblock this user">
   </form>
 </div>
 </body>

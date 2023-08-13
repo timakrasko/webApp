@@ -9,7 +9,7 @@
 <header th:insert="~{blocks/header/header :: header}"></header>
 <br>
 <br>
-<div th:if="${isAuthenticated}" th:text="'Your current account: ' + ${currentUser.getUsername()}"></div>
+<div th:if="${isAuthenticated}" th:text="'Your current account: ' + ${user.getUsername()}"></div>
 <a th:if="!${isAuthenticated}" th:href="@{/login}" th:text="'Login'"></a>
 <a th:if="!${isAuthenticated}" th:href="@{/register}" th:text="'Reigistraion'"></a>
 <hr>
@@ -19,7 +19,6 @@
 </div>
 <br/>
 <hr/>
-<!--<a href="/users/new">Create new person</a>-->
 
 </body>
 </html>

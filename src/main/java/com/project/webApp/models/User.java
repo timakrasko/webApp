@@ -76,6 +76,10 @@ public class User implements UserDetails {
         planedFilmList = new ArrayList<>();
     }
 
+    public Boolean isLocked() {
+        return locked;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority =

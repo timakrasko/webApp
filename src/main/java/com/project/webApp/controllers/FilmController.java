@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +55,6 @@ public class FilmController {
         if (userDetails != null) {
             isAuthenticated = true;
 //            authenticatedUser = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-            System.out.println(userDetails.getUsername());
         }
         model.addAttribute("authenticatedUser", authenticatedUser);
         model.addAttribute("isAuthenticated", isAuthenticated);

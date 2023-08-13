@@ -1,12 +1,16 @@
 package com.project.webApp.services;
 
 import com.project.webApp.models.Film;
+import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +24,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
         user.getFriends().add(friend);
+        friend.getFriends().add(user);
         userRepository.save(user);
     }
 
@@ -27,6 +32,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
         user.getFriends().remove(friend);
+        friend.getFriends().remove(user);
         userRepository.save(user);
     }
 
@@ -83,5 +89,18 @@ public class UserService {
         }
     }
 
+    public void SetUserLockStatus(Long id, boolean lock, UserDetails userDetails) throws AccessDeniedException {
+        User admin = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        if (admin.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("This account should have ADMIN role");
+        }
 
+        User user = userRepository.findById(id).orElseThrow();
+        if (user.getRole() == Role.ADMIN) {
+            throw new AccessDeniedException("You can not block/unblock another admin");
+        }
+
+        user.setLocked(lock);
+        userRepository.save(user);
+    }
 }
