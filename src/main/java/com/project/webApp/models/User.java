@@ -64,6 +64,9 @@ public class User implements UserDetails {
     private Boolean enabled = false;
 
     public User(){
+        friends = new ArrayList<>();
+        watchedFilmList = new HashMap<>();
+        planedFilmList = new ArrayList<>();
     }
 
     public User(String username, String email, String password, Role role) {

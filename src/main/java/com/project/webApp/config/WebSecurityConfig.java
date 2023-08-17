@@ -15,7 +15,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((requests) -> requests
 //                        .requestMatchers("/", "/register", "/users", "/confirm").permitAll()
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/*", "/users/*", "/films/*").permitAll()
+                        .requestMatchers("/users/*/block", "/users/*/unblock", "/films/*/edit", "/films/*/delete").hasAuthority("ADMIN")
+//                        .requestMatchers("/*", "/users/*", "/films/*").hasAnyAuthority("ADMIN", "USER")
                         .anyRequest().authenticated()
                 );
         http.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);

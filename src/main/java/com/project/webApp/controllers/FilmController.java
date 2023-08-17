@@ -5,6 +5,7 @@ import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
+import com.project.webApp.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class FilmController {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final FilmService filmService;
+    private final UserService userService;
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -65,10 +67,19 @@ public class FilmController {
 
     @GetMapping("films/{id}")
     public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
+//        model.addAttribute("isUserAdmin", true);
+
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         model.addAttribute("film", film);
-        String userName = userDetails.getUsername();
-        User user = userRepository.findByUsername(userName).orElseThrow(()-> new IllegalArgumentException("User not found"));
+
+//        String userName = userDetails.getUsername();
+//        User user = userRepository.findByUsername(userName).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        User user = new User();
+        if (userDetails != null) {
+            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        }
+
         Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
         boolean isWatched = watchedFilmList.containsKey(film);
         model.addAttribute("isWatched", isWatched);
@@ -152,6 +163,11 @@ public class FilmController {
 
         if (film.getFilename() == null) {
             film.setFilename((String) session.getAttribute("fileName"));
+        } else {
+            File img = new File(uploadPath + "/" + session.getAttribute("fileName"));
+            if (img.exists()) {
+                img.delete();
+            }
         }
         filmRepository.save(film);
         return "redirect:/films";
@@ -163,8 +179,7 @@ public class FilmController {
         if (film.getFilename() != null) {
             File img = new File(uploadPath + "/" + film.getFilename());
             if (img.exists()) {
-                boolean isDeleted = img.delete();
-                System.out.println(isDeleted);
+                img.delete();
             }
         }
 
@@ -173,7 +188,7 @@ public class FilmController {
         return "redirect:/films";
     }
 
-    @PostMapping("/films/{id}/add_message")
+    @PostMapping("/films/{id}/add_comment")
     public String addMessage(@AuthenticationPrincipal UserDetails userDetails,
                              @RequestParam String message,
                              @PathVariable("id") Long id,
@@ -183,7 +198,28 @@ public class FilmController {
         Comment comment = new Comment(message, user);
         commentRepository.save(comment);
         filmService.addComment(id, comment.getId());
-        return "redirect:/films";
+        return "redirect:/films/" + id;
     }
 
+    @PostMapping("/films/{id}/edit_comment")
+    public String editComment(@AuthenticationPrincipal UserDetails userDetails,
+                              @RequestParam String message,
+                              @PathVariable("id") Long id,
+                              Model model) {
+
+        return "redirect:/films/" + id;
+    }
+
+    @PostMapping("/films/{filmId}/delete_comment/{commentId}")
+    public String deleteComment(@AuthenticationPrincipal UserDetails userDetails,
+                              @PathVariable("filmId") Long filmId,
+                                @PathVariable("commentId") Long commentId,
+                              Model model) {
+        Film film = filmRepository.findById(filmId).orElseThrow();
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        film.getComments().remove(comment);
+        filmRepository.save(film);
+        commentRepository.delete(comment);
+        return "redirect:/films/" + filmId;
+    }
 }

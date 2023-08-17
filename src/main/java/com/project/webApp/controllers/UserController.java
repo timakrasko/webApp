@@ -4,6 +4,7 @@ import com.project.webApp.models.ConfirmationToken;
 import com.project.webApp.models.Film;
 import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
+import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.ConfirmationTokenRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
@@ -34,90 +35,91 @@ public class UserController {
 
     @GetMapping()
     public String index(Model model, @AuthenticationPrincipal UserDetails userDetails){
-        addStartAttributesToModel(model, userDetails);
+        userService.addStartAttributesToModel(model, userDetails);
         model.addAttribute("users", userRepository.findAll());
         return "users/index";
     }
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") Long id, Model model,
-                       @AuthenticationPrincipal UserDetails userDetails){
-//        addStartAttributesToModel(model, userDetails);
-
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        model.addAttribute("user", user);
-
-        String name = userDetails.getUsername();
-        User autUser = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
-
-        List<User> friendList = autUser.getFriends();
-        boolean isFriend = friendList.contains(user);
-        model.addAttribute("isFriend", isFriend);
-
-        boolean isItself = user.getId().equals(autUser.getId());
-        model.addAttribute("isItself", isItself);
-
-        List<User> friends = user.getFriends();
-        model.addAttribute("friends", friends);
-
-        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
-        model.addAttribute("watchedFilms", watchedFilmList);
-
-        List<Film> planedFilmList = user.getPlanedFilmList();
-        model.addAttribute("planedFilms", planedFilmList);
-
-        boolean isAutUserAdmin = autUser.getRole() == Role.ADMIN;
-        model.addAttribute("isAutUserAdmin", isAutUserAdmin);
-
-        boolean isUserLocked = user.isLocked();
-        model.addAttribute("isUserLocked", isUserLocked);
-
-        boolean isUserAdmin = user.getRole() == Role.ADMIN;
-        model.addAttribute("isUserAdmin", isUserAdmin);
-        return "users/show";
-    }
-
 //    @GetMapping("/{id}")
 //    public String show(@PathVariable("id") Long id, Model model,
 //                       @AuthenticationPrincipal UserDetails userDetails){
-//        addStartAttributesToModel(model, userDetails);
+////        addStartAttributesToModel(model, userDetails);
 //
-////        User anotherUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-//        model.addAttribute("anotherUser", anotherUser);
+//        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+//        model.addAttribute("user", user);
 //
-////        String name = userDetails.getUsername();
-////        User autUser = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
+//        String name = userDetails.getUsername();
+//        User autUser = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
 //
-////        User user = new User();
-//        if (userDetails != null) {
-//            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-//        }
-//
-//        List<User> friendList = user.getFriends();
-//        boolean isFriend = friendList.contains(anotherUser);
+//        List<User> friendList = autUser.getFriends();
+//        boolean isFriend = friendList.contains(user);
 //        model.addAttribute("isFriend", isFriend);
 //
-//        boolean isItself = anotherUser.getId().equals(user.getId());
+//        boolean isItself = user.getId().equals(autUser.getId());
 //        model.addAttribute("isItself", isItself);
 //
-//        List<User> friends = anotherUser.getFriends();
+//        List<User> friends = user.getFriends();
 //        model.addAttribute("friends", friends);
 //
-//        Map<Film, Integer> watchedFilmList = anotherUser.getWatchedFilmList();
+//        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
 //        model.addAttribute("watchedFilms", watchedFilmList);
 //
-//        List<Film> planedFilmList = anotherUser.getPlanedFilmList();
+//        List<Film> planedFilmList = user.getPlanedFilmList();
 //        model.addAttribute("planedFilms", planedFilmList);
 //
-//        boolean isAutUserAdmin = user.getRole() == Role.ADMIN;
+//        boolean isAutUserAdmin = autUser.getRole() == Role.ADMIN;
 //        model.addAttribute("isAutUserAdmin", isAutUserAdmin);
 //
-//        boolean isUserLocked = anotherUser.isLocked();
+//        boolean isUserLocked = user.isLocked();
 //        model.addAttribute("isUserLocked", isUserLocked);
 //
-//        boolean isUserAdmin = anotherUser.getRole() == Role.ADMIN;
+//        boolean isUserAdmin = user.getRole() == Role.ADMIN;
 //        model.addAttribute("isUserAdmin", isUserAdmin);
 //        return "users/show";
 //    }
+
+    @GetMapping("/{id}")
+    public String show(@PathVariable("id") Long id, Model model,
+                       @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
+
+        User anotherUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        model.addAttribute("anotherUser", anotherUser);
+
+        User user = new User();
+        if (userDetails != null) {
+            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        }
+
+        List<User> friendList = user.getFriends();
+        boolean isFriend = friendList.contains(anotherUser);
+        model.addAttribute("isFriend", isFriend);
+
+        boolean isItself = anotherUser.getId().equals(user.getId());
+        model.addAttribute("isItself", isItself);
+
+        List<User> friends = anotherUser.getFriends();
+        model.addAttribute("friends", friends);
+
+        Map<Film, Integer> watchedFilmList = anotherUser.getWatchedFilmList();
+        model.addAttribute("watchedFilms", watchedFilmList);
+
+        List<Film> planedFilmList = anotherUser.getPlanedFilmList();
+        model.addAttribute("planedFilms", planedFilmList);
+
+        boolean isUserLocked = anotherUser.isLocked();
+        model.addAttribute("isAnotherUserLocked", isUserLocked);
+
+        boolean isUserAdmin = anotherUser.getRole() == Role.ADMIN;
+        model.addAttribute("isAnotherUserAdmin", isUserAdmin);
+        return "users/show";
+    }
+
+    @GetMapping("/test")
+    public String hello(Model model) {
+        User user = new User();
+        model.addAttribute("id", user.getId());
+        return "hello";
+    }
 
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Long id, Model model){
@@ -233,40 +235,30 @@ public class UserController {
 
     @PostMapping("/{id}/block")
     public String blockUser(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            userService.SetUserLockStatus(id, true, userDetails);
-        } catch (AccessDeniedException e) {
-            e.printStackTrace();
-        }
-
+        userService.SetUserLockStatus(id, true, userDetails);
         return "redirect:/users/" + id;
     }
 
     @PostMapping("/{id}/unblock")
     public String unblockUser(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            userService.SetUserLockStatus(id, false, userDetails);
-        } catch (AccessDeniedException e) {
-            e.printStackTrace();
-        }
-
+        userService.SetUserLockStatus(id, false, userDetails);
         return "redirect:/users/" + id;
     }
 
-    public void addStartAttributesToModel(Model model, UserDetails userDetails) {
-        boolean isAuthorized = false;
-        User user = new User();
-        if (userDetails != null) {
-            isAuthorized = true;
-            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        }
-
-        boolean isUserLocked = user.isLocked();
-        boolean isUserAdmin = user.getRole() == Role.ADMIN;
-
-        model.addAttribute("isAuthenticated", isAuthorized);
-        model.addAttribute("isUserLocked", isUserLocked);
-        model.addAttribute("isUserAdmin", isUserAdmin);
-        model.addAttribute("user", user);
-    }
+//    public void addStartAttributesToModel(Model model, UserDetails userDetails) {
+//        boolean isAuthorized = false;
+//        User user = new User();
+//        if (userDetails != null) {
+//            isAuthorized = true;
+//            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+//        }
+//
+//        boolean isUserLocked = user.isLocked();
+//        boolean isUserAdmin = user.getRole() == Role.ADMIN;
+//
+//        model.addAttribute("isAuthenticated", isAuthorized);
+//        model.addAttribute("isUserLocked", isUserLocked);
+//        model.addAttribute("isUserAdmin", isUserAdmin);
+//        model.addAttribute("user", user);
+//    }
 }
