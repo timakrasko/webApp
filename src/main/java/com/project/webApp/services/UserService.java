@@ -107,18 +107,18 @@ public class UserService {
 
     public void addStartAttributesToModel(Model model, UserDetails userDetails) {
         boolean isAuthorized = false;
-        User user = new User();
+        boolean isUserLocked = false;
+        boolean isUserAdmin = false;
         if (userDetails != null) {
             isAuthorized = true;
-            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+            isUserLocked = user.isLocked();
+            isUserAdmin = user.getRole() == Role.ADMIN;
+            model.addAttribute("user", user);
         }
-
-        boolean isUserLocked = user.isLocked();
-        boolean isUserAdmin = user.getRole() == Role.ADMIN;
 
         model.addAttribute("isAuthenticated", isAuthorized);
         model.addAttribute("isUserLocked", isUserLocked);
         model.addAttribute("isUserAdmin", isUserAdmin);
-        model.addAttribute("user", user);
     }
 }

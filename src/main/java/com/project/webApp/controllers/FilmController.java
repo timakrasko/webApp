@@ -39,7 +39,9 @@ public class FilmController {
 
     @GetMapping("/films")
     public String films(@RequestParam(required = false, defaultValue = "") String filter,
-                        Model model){
+                        Model model, @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
+
         Iterable<Film> films;
         if (filter != null && !filter.isEmpty()) {
             films = filmRepository.findByTitleContainsIgnoreCase(filter);
@@ -52,14 +54,6 @@ public class FilmController {
     }
     @GetMapping("/")
     public String mainPage(Model model, @AuthenticationPrincipal UserDetails userDetails){
-        User authenticatedUser = new User();
-        boolean isAuthenticated = false;
-        if (userDetails != null) {
-            isAuthenticated = true;
-//            authenticatedUser = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-        }
-        model.addAttribute("authenticatedUser", authenticatedUser);
-        model.addAttribute("isAuthenticated", isAuthenticated);
         Iterable<Film> films = filmRepository.findAll();
         model.addAttribute("films", films);
         return "main";
@@ -68,35 +62,36 @@ public class FilmController {
     @GetMapping("films/{id}")
     public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
         userService.addStartAttributesToModel(model, userDetails);
-//        model.addAttribute("isUserAdmin", true);
 
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-        model.addAttribute("film", film);
 
-//        String userName = userDetails.getUsername();
-//        User user = userRepository.findByUsername(userName).orElseThrow(()-> new IllegalArgumentException("User not found"));
-        User user = new User();
-        if (userDetails != null) {
-            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        }
-
-        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
-        boolean isWatched = watchedFilmList.containsKey(film);
-        model.addAttribute("isWatched", isWatched);
-        List<Film> planedFilmList = user.getPlanedFilmList();
-        boolean isPlaned = planedFilmList.contains(film);
-        model.addAttribute("isPlaned", isPlaned);
         List<Comment> comments = film.getComments();
-        model.addAttribute("comments", comments);
         Set<Genres> genres = film.getGenres();
-        model.addAttribute("genres", genres);
         Integer mark = -1;
-        if (isWatched) {
-            mark = watchedFilmList.get(film);
+        boolean isWatched = false;
+        boolean isPlaned = false;
+
+        if (userDetails != null) {
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+            Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
+            isWatched = watchedFilmList.containsKey(film);
+            List<Film> planedFilmList = user.getPlanedFilmList();
+            isPlaned = planedFilmList.contains(film);
+            if (isWatched) {
+                mark = watchedFilmList.get(film);
+            }
         }
+
+        model.addAttribute("isWatched", isWatched);
+        model.addAttribute("isPlaned", isPlaned);
+        model.addAttribute("comments", comments);
+        model.addAttribute("genres", genres);
         model.addAttribute("mark", mark);
+        model.addAttribute("film", film);
         return "films/show";
     }
+
+
     @GetMapping("films/new")
     public String newFilm(Model model){
         model.addAttribute("film", new Film());

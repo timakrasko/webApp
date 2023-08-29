@@ -1,10 +1,9 @@
 package com.project.webApp.controllers;
 
-import com.project.webApp.models.ConfirmationToken;
+
 import com.project.webApp.models.Film;
 import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
-import com.project.webApp.repository.CommentRepository;
 import com.project.webApp.repository.ConfirmationTokenRepository;
 import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
@@ -39,43 +36,6 @@ public class UserController {
         model.addAttribute("users", userRepository.findAll());
         return "users/index";
     }
-//    @GetMapping("/{id}")
-//    public String show(@PathVariable("id") Long id, Model model,
-//                       @AuthenticationPrincipal UserDetails userDetails){
-////        addStartAttributesToModel(model, userDetails);
-//
-//        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-//        model.addAttribute("user", user);
-//
-//        String name = userDetails.getUsername();
-//        User autUser = userRepository.findByUsername(name).orElseThrow(()-> new IllegalArgumentException("User not found"));
-//
-//        List<User> friendList = autUser.getFriends();
-//        boolean isFriend = friendList.contains(user);
-//        model.addAttribute("isFriend", isFriend);
-//
-//        boolean isItself = user.getId().equals(autUser.getId());
-//        model.addAttribute("isItself", isItself);
-//
-//        List<User> friends = user.getFriends();
-//        model.addAttribute("friends", friends);
-//
-//        Map<Film, Integer> watchedFilmList = user.getWatchedFilmList();
-//        model.addAttribute("watchedFilms", watchedFilmList);
-//
-//        List<Film> planedFilmList = user.getPlanedFilmList();
-//        model.addAttribute("planedFilms", planedFilmList);
-//
-//        boolean isAutUserAdmin = autUser.getRole() == Role.ADMIN;
-//        model.addAttribute("isAutUserAdmin", isAutUserAdmin);
-//
-//        boolean isUserLocked = user.isLocked();
-//        model.addAttribute("isUserLocked", isUserLocked);
-//
-//        boolean isUserAdmin = user.getRole() == Role.ADMIN;
-//        model.addAttribute("isUserAdmin", isUserAdmin);
-//        return "users/show";
-//    }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") Long id, Model model,
@@ -83,34 +43,31 @@ public class UserController {
         userService.addStartAttributesToModel(model, userDetails);
 
         User anotherUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        model.addAttribute("anotherUser", anotherUser);
-
-        User user = new User();
-        if (userDetails != null) {
-            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        }
-
-        List<User> friendList = user.getFriends();
-        boolean isFriend = friendList.contains(anotherUser);
-        model.addAttribute("isFriend", isFriend);
-
-        boolean isItself = anotherUser.getId().equals(user.getId());
-        model.addAttribute("isItself", isItself);
 
         List<User> friends = anotherUser.getFriends();
-        model.addAttribute("friends", friends);
-
         Map<Film, Integer> watchedFilmList = anotherUser.getWatchedFilmList();
-        model.addAttribute("watchedFilms", watchedFilmList);
-
         List<Film> planedFilmList = anotherUser.getPlanedFilmList();
+        boolean isAnotherUserLocked = anotherUser.isLocked();
+        boolean isAnotherUserAdmin = anotherUser.getRole() == Role.ADMIN;
+        boolean isFriend = false;
+        boolean isItself = false;
+
+        if (userDetails != null) {
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+            List<User> friendList = user.getFriends();
+            isFriend = friendList.contains(anotherUser);
+            isItself = anotherUser.getId().equals(user.getId());
+
+        }
+
+        model.addAttribute("isFriend", isFriend);
+        model.addAttribute("isItself", isItself);
+        model.addAttribute("friends", friends);
+        model.addAttribute("watchedFilms", watchedFilmList);
         model.addAttribute("planedFilms", planedFilmList);
-
-        boolean isUserLocked = anotherUser.isLocked();
-        model.addAttribute("isAnotherUserLocked", isUserLocked);
-
-        boolean isUserAdmin = anotherUser.getRole() == Role.ADMIN;
-        model.addAttribute("isAnotherUserAdmin", isUserAdmin);
+        model.addAttribute("isAnotherUserLocked", isAnotherUserLocked);
+        model.addAttribute("isAnotherUserAdmin", isAnotherUserAdmin);
+        model.addAttribute("anotherUser", anotherUser);
         return "users/show";
     }
 
@@ -121,13 +78,6 @@ public class UserController {
         return "hello";
     }
 
-    @GetMapping("/{id}/edit")
-    public String edit(@PathVariable("id") Long id, Model model){
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values());
-        return "users/edit";
-    }
     @PostMapping("/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult){
@@ -137,12 +87,12 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Long id) {
-        confirmationTokenRepository.deleteByUser_id(id);
-        userRepository.deleteById(id);
-        return "redirect:/users";
-    }
+//    @PostMapping("/{id}/delete")
+//    public String delete(@PathVariable("id") Long id) {
+//        confirmationTokenRepository.deleteByUser_id(id);
+//        userRepository.deleteById(id);
+//        return "redirect:/users";
+//    }
     @PostMapping("/{friendId}/add_friend")
     public String addFriend(@PathVariable Long friendId,
                             @AuthenticationPrincipal UserDetails userDetails){
@@ -244,21 +194,4 @@ public class UserController {
         userService.SetUserLockStatus(id, false, userDetails);
         return "redirect:/users/" + id;
     }
-
-//    public void addStartAttributesToModel(Model model, UserDetails userDetails) {
-//        boolean isAuthorized = false;
-//        User user = new User();
-//        if (userDetails != null) {
-//            isAuthorized = true;
-//            user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-//        }
-//
-//        boolean isUserLocked = user.isLocked();
-//        boolean isUserAdmin = user.getRole() == Role.ADMIN;
-//
-//        model.addAttribute("isAuthenticated", isAuthorized);
-//        model.addAttribute("isUserLocked", isUserLocked);
-//        model.addAttribute("isUserAdmin", isUserAdmin);
-//        model.addAttribute("user", user);
-//    }
 }

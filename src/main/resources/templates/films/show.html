@@ -20,7 +20,7 @@
     </span>
     <p th:text="${film.description}">VALUE</p>
 </div>
-    <form th:action="@{/users/{filmId}/rate_film(filmId=${film.getId()})}" method="post">
+    <form th:if="${isAuthenticated}" th:action="@{/users/{filmId}/rate_film(filmId=${film.getId()})}" method="post">
         <button type="submit" name="param" value="1">1</button>
         <button type="submit" name="param" value="2">2</button>
         <button type="submit" name="param" value="3">3</button>
@@ -42,17 +42,17 @@
     <form th:action="@{/films}" method="get">
         <button type="submit">Back</button>
     </form>
-    <form th:method="POST" th:if="${!isWatched}" th:action="@{/users/{id}/add_to_watched_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${!isWatched and isAuthenticated}" th:action="@{/users/{id}/add_to_watched_list(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Add film">
     </form>
-    <form th:method="POST" th:if="${isWatched}" th:action="@{/users/{id}/delete_from_watched_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${isWatched and isAuthenticated}" th:action="@{/users/{id}/delete_from_watched_list(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Delete film">
     </form>
 
-    <form th:method="POST" th:if="${!isPlaned && !isWatched}" th:action="@{/users/{id}/add_to_planed_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${!isPlaned && !isWatched and isAuthenticated}" th:action="@{/users/{id}/add_to_planed_list(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Add film to plan">
     </form>
-    <form th:method="POST" th:if="${isPlaned && !isWatched}" th:action="@{/users/{id}/delete_from_planed_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${isPlaned && !isWatched and isAuthenticated}" th:action="@{/users/{id}/delete_from_planed_list(id=${film.getId()})}" class="conteiner mt-2">
             <input type="submit" value="Delete film from plan">
     </form>
 <br/>
@@ -74,7 +74,7 @@
 </div>
 <br/>
 <hr/>
-<form th:method="POST" th:action="@{/films/{id}/add_comment(id=${film.getId})}" class="conteiner mt-2">
+<form th:if="${isAuthenticated}" th:method="POST" th:action="@{/films/{id}/add_comment(id=${film.getId})}" class="conteiner mt-2">
     <input type="text" name="message" placeholder="Type message" />
     <input type="submit" value="Create">
 </form>

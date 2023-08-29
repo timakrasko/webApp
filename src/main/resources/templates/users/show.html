@@ -34,19 +34,19 @@
   </div>
   <br/>
   <hr/>
-<form th:action="@{/users/{id}/edit(id=${anotherUser.getId()})}" method="get">
-  <button type="submit">Edit</button>
-</form>
-<form th:action="@{/users/{id}/delete(id=${anotherUser.getId()})}" method="post">
-  <button type="submit">Delete</button>
-</form>
+<!--<form th:action="@{/users/{id}/edit(id=${anotherUser.getId()})}" method="get">-->
+<!--  <button type="submit">Edit</button>-->
+<!--</form>-->
+<!--<form th:action="@{/users/{id}/delete(id=${anotherUser.getId()})}" method="post">-->
+<!--  <button type="submit">Delete</button>-->
+<!--</form>-->
 <form th:action="@{/users}" method="get">
   <button type="submit">Back</button>
 </form>
-  <form th:method="POST" th:if="${!isFriend and !isItself}" th:action="@{/users/{id}/add_friend(id=${anotherUser.getId()})}" class="conteiner mt-2">
+  <form th:method="POST" th:if="${!isFriend and !isItself and isAuthenticated}" th:action="@{/users/{id}/add_friend(id=${anotherUser.getId()})}" class="conteiner mt-2">
     <input type="submit" value="Add friend">
   </form>
-  <form th:method="POST" th:if="${isFriend}" th:action="@{/users/{id}/delete_friend(id=${anotherUser.getId()})}" class="conteiner mt-2">
+  <form th:method="POST" th:if="${isFriend and isAuthenticated}" th:action="@{/users/{id}/delete_friend(id=${anotherUser.getId()})}" class="conteiner mt-2">
     <input type="submit" value="Delete friend">
   </form>
 
