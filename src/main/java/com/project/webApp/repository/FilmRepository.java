@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FilmRepository extends CrudRepository<Film, Long> {
     List<Film> findByTitleContainsIgnoreCase (String title);
+    List<Film> findAllByTitleContainsOrderByRatingAsc(String title);
 }

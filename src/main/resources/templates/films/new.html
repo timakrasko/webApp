@@ -10,17 +10,17 @@
 <br>
 <br>
 <br>
-<form th:method="POST" enctype="multipart/form-data" th:action="@{/films}" th:object="${film}" class="conteiner mt-2">
+<form th:method="POST" enctype="multipart/form-data" th:action="@{/films}" th:object="${film}" class="container mt-4">
     <lable for="name">Enter title</lable>
-    <input type="text" th:field="*{title}" id="title"/>
+    <input type="text" th:field="*{title}" id="title" class="form-control w-25"/>
     <lable for="name">Enter description</lable>
+    <input type="text" th:field="*{description}" id="description" class="form-control w-25"/>
+    <input type="file" name="file">
     <div th:each="genre: ${genres}">
-        <input type="checkbox" th:field="*{genres}" th:value="${genre}" />
+        <input type="checkbox" th:field="*{genres}" th:value="${genre}"/>
         <label th:text="${genre}"></label>
     </div>
-    <input type="text" th:field="*{description}" id="description"/>
-    <input type="file" name="file">
-    <input type="submit" value="Create">
+    <input type="submit" value="Create" class="btn btn-primary">
     <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
 </form>
 </body>
