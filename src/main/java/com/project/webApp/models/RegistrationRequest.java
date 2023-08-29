@@ -1,10 +1,9 @@
 package com.project.webApp.models;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 
 @Data
@@ -18,6 +17,6 @@ public class RegistrationRequest {
     @Email(message = "Email should be valid")
     private String email;
     @NotEmpty(message = "Password should not be empty")
-    @Size(min = 4, max= 20, message = "Size of first name should be in range between 2 and 30")
+    @Size(min = 4, max= 20, message = "Size of password should be in range between 4 and 20")
     private String password;
 }

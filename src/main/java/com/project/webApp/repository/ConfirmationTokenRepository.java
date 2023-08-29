@@ -19,6 +19,8 @@ public interface ConfirmationTokenRepository
 
     void deleteByUser_id(Long user_id);
 
+    void deleteByToken(String token);
+
     @Transactional
     @Modifying
     @Query("UPDATE ConfirmationToken c " +

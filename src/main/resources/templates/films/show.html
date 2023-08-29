@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Film</title>
@@ -20,7 +20,7 @@
     </span>
     <p th:text="${film.description}">VALUE</p>
 </div>
-    <form th:action="@{/users/{filmId}/rate_film(filmId=${film.getId()})}" method="post">
+    <form th:if="${isAuthenticated}" th:action="@{/users/{filmId}/rate_film(filmId=${film.getId()})}" method="post">
         <button type="submit" name="param" value="1">1</button>
         <button type="submit" name="param" value="2">2</button>
         <button type="submit" name="param" value="3">3</button>
@@ -33,38 +33,48 @@
         <button type="submit" name="param" value="10">10</button>
     </form>
     <p th:if="${mark} != -1" th:text="'Your mark: ' + ${mark}"></p>
-    <form th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
+    <form th:if="${isUserAdmin}" th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
         <button type="submit">Edit</button>
     </form>
-    <form th:action="@{/films/{id}/delete(id=${film.getId()})}" method="post">
+    <form th:if="${isUserAdmin}" th:action="@{/films/{id}/delete(id=${film.getId()})}" method="post">
         <button type="submit">Delete</button>
     </form>
     <form th:action="@{/films}" method="get">
         <button type="submit">Back</button>
     </form>
-    <form th:method="POST" th:if="${!isWatched}" th:action="@{/users/{id}/add_to_watched_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${!isWatched and isAuthenticated}" th:action="@{/users/{id}/add_to_watched_list(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Add film">
     </form>
-    <form th:method="POST" th:if="${isWatched}" th:action="@{/users/{id}/delete_from_watched_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${isWatched and isAuthenticated}" th:action="@{/users/{id}/delete_from_watched_list(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Delete film">
     </form>
 
-    <form th:method="POST" th:if="${!isPlaned && !isWatched}" th:action="@{/users/{id}/add_to_planed_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${!isPlaned && !isWatched and isAuthenticated}" th:action="@{/users/{id}/add_to_planed_list(id=${film.getId()})}" class="conteiner mt-2">
         <input type="submit" value="Add film to plan">
     </form>
-    <form th:method="POST" th:if="${isPlaned && !isWatched}" th:action="@{/users/{id}/delete_from_planed_list(id=${film.getId()})}" class="conteiner mt-2">
+    <form th:method="POST" th:if="${isPlaned && !isWatched and isAuthenticated}" th:action="@{/users/{id}/delete_from_planed_list(id=${film.getId()})}" class="conteiner mt-2">
             <input type="submit" value="Delete film from plan">
     </form>
 <br/>
 <hr/>
 <div th:if="${comments}" class="conteiner mt-2" th:each="comment: ${comments}">
+<!--    <p th:text="${comment.author.getUsername}">VALUE</p>-->
+    <a th:href="@{/users/{id}(id=${comment.author.getId()})}" th:text="${comment.author.getUsername}">VALUE</a>
+
+<!--    DELETE/EDIT COMMENT-->
+<!--    <form th:if="${isUserAdmin}" th:action="@{/films/{id}/edit_comment(id=${film.getId()})}" method="get">-->
+<!--        <button type="submit">Edit comment</button>-->
+<!--    </form>-->
+    <form th:if="${isUserAdmin or comment.getAuthor().getId() == user.getId()}" th:action="@{/films/{filmId}/delete_comment/{commentId}(filmId=${film.getId()}, commentId=${comment.getId()})}" method="post" class="conteiner mt-2">
+        <button type="submit">Delete comment</button>
+    </form>
+
     <p th:text="${comment.message}">VALUE</p>
-    <p th:text="${comment.author.getUsername}">VALUE</p>
     <hr/>
 </div>
 <br/>
 <hr/>
-<form th:method="POST" th:action="@{/films/{id}/add_message(id=${film.getId})}" class="conteiner mt-2">
+<form th:if="${isAuthenticated}" th:method="POST" th:action="@{/films/{id}/add_comment(id=${film.getId})}" class="conteiner mt-2">
     <input type="text" name="message" placeholder="Type message" />
     <input type="submit" value="Create">
 </form>
