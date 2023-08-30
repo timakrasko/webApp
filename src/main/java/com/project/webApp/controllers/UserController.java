@@ -39,7 +39,7 @@ public class UserController {
         if (userDetails != null) {
             if (userDetails.getUsername() != null) {
                 currentUser = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-                System.out.println(userDetails.getUsername());
+//                System.out.println(userDetails.getUsername());
                 isAuthenticated = true;
             }
         }

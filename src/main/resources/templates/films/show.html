@@ -45,6 +45,7 @@
     </span>
     </p>
     <p th:text="${film.description}">VALUE</p>
+    <p th:text="${film.releaseDate}">VALUE</p>
     <form th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
         <button type="submit" class="btn btn-primary">Edit</button>
     </form>
@@ -54,7 +55,7 @@
     <br>
     <h5>Comments</h5>
     <hr>
-    <div th:if="${comments}" th:each="comment: ${comments}">
+    <div th:each="comment: ${comments}">
         <p th:text="${comment.message}">Message</p>
         <p th:text="${comment.author.getUsername}">Username</p>
         <hr/>
