@@ -37,10 +37,10 @@ public class RegistrationController {
             return "register";
         }
 
-        System.out.println("User name: " + request.getUserName());
-        System.out.println("Email: " + request.getEmail());
-        System.out.println("Password: " + request.getPassword());
-        System.out.println("-------------------------------");
+//        System.out.println("User name: " + request.getUserName());
+//        System.out.println("Email: " + request.getEmail());
+//        System.out.println("Password: " + request.getPassword());
+//        System.out.println("-------------------------------");
 
         model.addAttribute("showEmailMessage", true);
 
