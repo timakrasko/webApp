@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public class Film {
     private String filename;
     private String description;
     private double rating;
+    private Date releaseDate;
     @OneToMany
     @JoinTable(name = "film_comments",
             joinColumns = @JoinColumn(name = "film_id"),

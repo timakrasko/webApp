@@ -1,60 +1,88 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>User</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <style>
+    a {
+      text-decoration: none;
+      color: #000;
+    }
+  </style>
 </head>
 <body>
 <header th:insert="~{blocks/header/header :: header}"></header>
 <br>
-<br>
-<div class="conteiner mt-2">
-<p th:text="${anotherUser.username}">VALUE</p>
-<p th:text="${anotherUser.id}">VALUE</p>
-<p style="color: darkred" th:if="${isAnotherUserLocked}" th:text="'User blocked'">User blocked</p>
-  <br/>
+<div class="container mt-5">
+  <h4 th:text="${anotherUser.getUsername}">Username</h4>
+  <h4 th:text="${anotherUser.getEmail}">Email</h4>
+  <p th:text="'ID: ' + ${anotherUser.getId}">Id</p>
   <hr/>
-  <p>Friends</p>
-  <div class="conteiner mt-2" th:each="friend: ${friends}">
-    <p><a th:href="@{/users/{id}(id=${friend.getId()})}" th:text="${friend.getUsername}">user</a></p>
-  </div>
-  <br/>
-  <hr/>
-  <p>Watched List</p>
-  <div class="conteiner mt-2" th:each="film : ${watchedFilms}">
-    <tr><a th:href="@{/films/{id}(id=${film.key.getId()})}" th:text="${film.key.getTitle}"></a></tr>
-    <tr th:text="${film.value}"></tr>
-  </div>
-  <br/>
-  <hr/>
-  <p>Planed List</p>
-  <div class="conteiner mt-2" th:each="film : ${planedFilms}">
-    <tr><a th:href="@{/films/{id}(id=${film.getId()})}" th:text="${film.getTitle}"></a></tr>
-  </div>
-  <br/>
-  <hr/>
-<!--<form th:action="@{/users/{id}/edit(id=${anotherUser.getId()})}" method="get">-->
-<!--  <button type="submit">Edit</button>-->
-<!--</form>-->
-<!--<form th:action="@{/users/{id}/delete(id=${anotherUser.getId()})}" method="post">-->
-<!--  <button type="submit">Delete</button>-->
-<!--</form>-->
-<form th:action="@{/users}" method="get">
-  <button type="submit">Back</button>
-</form>
+  <h5>Friends</h5>
+  <table class="table">
+    <thead>
+    <tr>
+      <th width="5%" scope="col">ID</th>
+      <th width="95%" scope="col">Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="friend: ${friends}">
+      <th scope="row" th:text="${friend.getId()}"></th>
+      <td><a th:href="@{/users/{id}(id=${friend.getId()})}" th:text="${friend.getUsername}"></a></td>
+    </tr>
+    </tbody>
+  </table>
+  <h5>Watched</h5>
+  <table class="table">
+    <thead>
+    <tr>
+      <th width="5%" scope="col">ID</th>
+      <th width="90%" scope="col">Title</th>
+      <th width="5%" scope="col">Rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="film : ${watchedFilms}">
+      <th scope="row" th:text="${film.key.getId()}"></th>
+      <td><a th:href="@{/films/{id}(id=${film.key.getId()})}" th:text="${film.key.getTitle()}"></a></td>
+      <td th:if="${film.value}!=-1" th:text="${film.value}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <h5>Planed</h5>
+  <table class="table">
+    <thead>
+    <tr>
+      <th width="5%" scope="col">ID</th>
+      <th width="95%" scope="col">Title</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="film : ${planedFilms}">
+      <th scope="row" th:text="${film.getId()}"></th>
+      <td><a th:href="@{/films/{id}(id=${film.getId()})}" th:text="${film.getTitle}"></a></td>
+    </tr>
+    </tbody>
+  </table>
+<!--  <form th:action="@{/users/{id}/edit(id=${anotherUser.getId()})}" method="get">-->
+<!--    <button type="submit" class="btn btn-primary">Edit</button>-->
+<!--  </form>-->
+<!--  <form th:action="@{/users/{id}/delete(id=${anotherUser.getId()})}" method="post">-->
+<!--    <button type="submit" class="btn btn-danger">Delete</button>-->
+<!--  </form>-->
   <form th:method="POST" th:if="${!isFriend and !isItself and isAuthenticated}" th:action="@{/users/{id}/add_friend(id=${anotherUser.getId()})}" class="conteiner mt-2">
-    <input type="submit" value="Add friend">
+    <input type="submit" value="Add friend" class="btn btn-success">
   </form>
   <form th:method="POST" th:if="${isFriend and isAuthenticated}" th:action="@{/users/{id}/delete_friend(id=${anotherUser.getId()})}" class="conteiner mt-2">
-    <input type="submit" value="Delete friend">
+    <input type="submit" value="Delete friend" class="btn btn-danger">
   </form>
-
   <form th:method="POST" th:if="${!isAnotherUserLocked and isUserAdmin and !isAnotherUserAdmin}" th:action="@{/users/{id}/block(id=${anotherUser.getId()})}" class="conteiner mt-2">
-    <input type="submit" value="Block this user">
+    <input type="submit" value="Block this user" class="btn btn-danger">
   </form>
   <form th:method="POST" th:if="${isAnotherUserLocked and isUserAdmin and !isAnotherUserAdmin}" th:action="@{/users/{id}/unblock(id=${anotherUser.getId()})}" class="conteiner mt-2">
-    <input type="submit" value="Unblock this user">
+    <input type="submit" value="Unblock this user" class="btn btn-success">
   </form>
 </div>
 </body>

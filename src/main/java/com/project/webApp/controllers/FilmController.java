@@ -20,10 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -54,6 +53,7 @@ public class FilmController {
     }
     @GetMapping("/")
     public String mainPage(Model model, @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
         Iterable<Film> films = filmRepository.findAll();
         model.addAttribute("films", films);
         return "main";
@@ -101,16 +101,11 @@ public class FilmController {
     @PostMapping("/films")
     public String create(@ModelAttribute("film") @Valid Film film,
                          @RequestParam("file") MultipartFile file,
-                         BindingResult bindingResult) throws IOException {
+                         @RequestParam("date") String date,
+                         BindingResult bindingResult) throws IOException, ParseException {
         if (bindingResult.hasErrors())
             return "films/new";
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(uploadPath);
-
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-
+        if (file != null && !Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) {
             String uuidFile = UUID.randomUUID().toString();
             String resultFilename = uuidFile + "." + file.getOriginalFilename();
 
@@ -118,52 +113,38 @@ public class FilmController {
 
             film.setFilename(resultFilename);
         }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        film.setReleaseDate(dateFormat.parse(date));
         filmRepository.save(film);
         return "redirect:/films";
     }
     @GetMapping("films/{id}/edit")
-    public String edit(@PathVariable("id") Long id, Model model, HttpSession session){
+    public String edit(@PathVariable("id") Long id, Model model){
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-
-        String fileName = film.getFilename();
-        session.setAttribute("fileName", fileName);
-
+        filmService.avrRateFilm(id);
         model.addAttribute("film", film);
         model.addAttribute("genres", Genres.values());
         return "films/edit";
     }
     @PostMapping("films/{id}")
     public String update(@ModelAttribute("film") @Valid Film film,
-                         HttpSession session,
                          @RequestParam("file") MultipartFile file,
-                         BindingResult bindingResult, Model model) throws IOException {
+                         @RequestParam("date") String date,
+                         BindingResult bindingResult) throws IOException, ParseException {
         if (bindingResult.hasErrors())
             return "films/edit";
-
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(uploadPath);
-
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
+        if (file != null && !Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) {
 
             String uuidFile = UUID.randomUUID().toString();
             String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
 
             file.transferTo(new File(uploadPath + "/" + resultFilename));
 
             film.setFilename(resultFilename);
         }
-
-        if (film.getFilename() == null) {
-            film.setFilename((String) session.getAttribute("fileName"));
-        } else {
-            File img = new File(uploadPath + "/" + session.getAttribute("fileName"));
-            if (img.exists()) {
-                img.delete();
-            }
-        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        film.setReleaseDate(dateFormat.parse(date));
+        film.setRating(filmService.avrRateFilm(film.getId()));
         filmRepository.save(film);
         return "redirect:/films";
     }
