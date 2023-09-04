@@ -18,7 +18,7 @@
     <lable for="name">Enter description</lable>
     <input type="text" th:field="*{description}" id="description" class="form-control w-25"/>
     <lable for="name">Enter release date</lable>
-    <input type="date" id="date" name="date"/>
+    <input type="date" id="date" name="date" th:value="${film.releaseDate != null ? film.showDate : ''}"/>
     <div th:each="genre: ${genres}">
         <input type="checkbox" th:field="*{genres}" th:value="${genre}" />
         <label th:text="${genre}"></label>

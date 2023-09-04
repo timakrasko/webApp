@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -39,5 +40,9 @@ public class Film {
     public String showRating(){
         String formattedDouble = new DecimalFormat("#0.0").format(rating);
         return formattedDouble;
+    }
+    public String showDate(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(releaseDate);
     }
 }

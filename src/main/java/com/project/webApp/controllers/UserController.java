@@ -71,13 +71,6 @@ public class UserController {
         return "users/show";
     }
 
-    @GetMapping("/test")
-    public String hello(Model model) {
-        User user = new User();
-        model.addAttribute("id", user.getId());
-        return "hello";
-    }
-
     @PostMapping("/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult){
@@ -142,6 +135,8 @@ public class UserController {
         if(!user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.deleteFilmFromWatchedList(id, filmId);
+        film.setRating(filmService.avrRateFilm(filmId));
+        filmRepository.save(film);
         return "redirect:/films/" + filmId;
     }
     @PostMapping("{filmId}/add_to_planed_list")

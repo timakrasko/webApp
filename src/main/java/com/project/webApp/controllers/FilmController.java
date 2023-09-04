@@ -6,7 +6,6 @@ import com.project.webApp.repository.FilmRepository;
 import com.project.webApp.repository.UserRepository;
 import com.project.webApp.services.FilmService;
 import com.project.webApp.services.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,9 +51,42 @@ public class FilmController {
         return "films/index";
     }
     @GetMapping("/")
-    public String mainPage(Model model, @AuthenticationPrincipal UserDetails userDetails){
+    public String mainPage(Model model,
+                           @RequestParam(name = "choose", defaultValue = "1") Integer choose,
+                           @AuthenticationPrincipal UserDetails userDetails){
         userService.addStartAttributesToModel(model, userDetails);
-        Iterable<Film> films = filmRepository.findAll();
+        User authenticatedUser = new User();
+        boolean isAuthenticated = userDetails != null;
+        model.addAttribute("authenticatedUser", authenticatedUser);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        model.addAttribute("genres", Genres.values());
+        filmRepository.findAll();
+        Iterable<Film> films = switch (choose) {
+            case 1 -> filmRepository.findAllByTitleContainsOrderByRatingDesc("");
+            case 2 -> filmRepository.findAllByTitleContainsOrderByReleaseDateDesc("");
+            default -> filmRepository.findAll();
+        };
+        model.addAttribute("films", films);
+        return "main";
+    }
+
+    @GetMapping("/{genre}")
+    public String mainPageByGenre(Model model,
+                                  @RequestParam(name = "choose", defaultValue = "1") Integer choose,
+                                  @PathVariable("genre") Genres genre,
+                                  @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
+        User authenticatedUser = new User();
+        boolean isAuthenticated = userDetails != null;
+        model.addAttribute("authenticatedUser", authenticatedUser);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        model.addAttribute("genres", Genres.values());
+        filmRepository.findAllByGenresContainsOrderByRatingDesc(genre);
+        Iterable<Film> films = switch (choose) {
+            case 1 -> filmRepository.findAllByGenresContainsOrderByRatingDesc(genre);
+            case 2 -> filmRepository.findAllByGenresContainsOrderByReleaseDateDesc(genre);
+            default -> filmRepository.findAllByGenresContainsOrderByRatingDesc(genre);
+        };
         model.addAttribute("films", films);
         return "main";
     }
@@ -62,9 +94,7 @@ public class FilmController {
     @GetMapping("films/{id}")
     public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
         userService.addStartAttributesToModel(model, userDetails);
-
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-
         List<Comment> comments = film.getComments();
         Set<Genres> genres = film.getGenres();
         Integer mark = -1;
@@ -93,7 +123,8 @@ public class FilmController {
 
 
     @GetMapping("films/new")
-    public String newFilm(Model model){
+    public String newFilm(Model model, @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
         model.addAttribute("film", new Film());
         model.addAttribute("genres", Genres.values());
         return "films/new";
@@ -114,14 +145,15 @@ public class FilmController {
             film.setFilename(resultFilename);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = dateFormat.parse(date);
         film.setReleaseDate(dateFormat.parse(date));
         filmRepository.save(film);
         return "redirect:/films";
     }
     @GetMapping("films/{id}/edit")
-    public String edit(@PathVariable("id") Long id, Model model){
+    public String edit(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
+        userService.addStartAttributesToModel(model, userDetails);
         Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-        filmService.avrRateFilm(id);
         model.addAttribute("film", film);
         model.addAttribute("genres", Genres.values());
         return "films/edit";
@@ -144,7 +176,10 @@ public class FilmController {
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         film.setReleaseDate(dateFormat.parse(date));
-        film.setRating(filmService.avrRateFilm(film.getId()));
+        int filmExists = filmService.checkIfFilmExistsInWatchedList(film.getId());
+        if (filmExists > 0) {
+            film.setRating(filmService.avrRateFilm(film.getId()));
+        }
         filmRepository.save(film);
         return "redirect:/films";
     }
@@ -158,8 +193,10 @@ public class FilmController {
                 img.delete();
             }
         }
-
-        filmService.deleteFilmFromWatchList(id);
+        int filmExists = filmService.checkIfFilmExistsInWatchedList(id);
+        if (filmExists > 0) {
+            filmService.deleteFilmFromWatchList(id);
+        }
         filmRepository.deleteById(id);
         return "redirect:/films";
     }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Film</title>
@@ -45,7 +45,7 @@
     </span>
     </p>
     <p th:text="${film.description}">VALUE</p>
-    <p th:text="${film.releaseDate}">VALUE</p>
+    <p th:if="${film.getReleaseDate}" th:text="${film.showDate}">VALUE</p>
     <form th:if="${isUserAdmin}" th:action="@{/films/{id}/edit(id=${film.getId()})}" method="get">
         <button type="submit" class="btn btn-primary">Edit</button>
     </form>
@@ -56,7 +56,6 @@
     <h5>Comments</h5>
     <hr>
     <div th:if="${comments}" th:each="comment: ${comments}">
-        <!--    <p th:text="${comment.author.getUsername}">VALUE</p>-->
         <a th:href="@{/users/{id}(id=${comment.author.getId()})}" th:text="${comment.author.getUsername}">VALUE</a>
 
         <!--    DELETE/EDIT COMMENT-->
