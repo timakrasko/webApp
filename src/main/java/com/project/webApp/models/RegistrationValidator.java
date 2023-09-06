@@ -9,7 +9,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegistrationRequest {
+public class RegistrationValidator {
     @NotEmpty(message = "User name should not be empty")
     @Size(min = 2, max= 30, message = "Size of user name should be in range between 2 and 30")
     private String userName;
