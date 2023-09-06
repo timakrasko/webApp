@@ -15,8 +15,8 @@
             white-space: nowrap;
             overflow: hidden;
         }
-        .btn{
-            margin-top: 6px;
+        .btn-secondary{
+            margin-top: 5px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             margin-left: 20px;
@@ -74,8 +74,8 @@
                 <button type="submit" name="choose" value="2" class="btn btn-secondary">Date</button>
             </form>
             <br>
-            <form method="get" th:each="genre : ${genres}" th:action="@{/{genre}(genre=${genre})}">
-                <button type="submit" th:text="${genre}" class="btn btn-secondary"/>
+            <form method="get" th:each="genre : ${genres}" th:action="@{/main/{genre}(genre=${genre})}">
+                <button type="submit" th:text="${genre}" class="btn o btn-secondary"/>
             </form>
         </div>
     </div>

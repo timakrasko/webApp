@@ -50,7 +50,7 @@ public class FilmController {
         model.addAttribute("filter", filter);
         return "films/index";
     }
-    @GetMapping("/")
+    @GetMapping("/main")
     public String mainPage(Model model,
                            @RequestParam(name = "choose", defaultValue = "1") Integer choose,
                            @AuthenticationPrincipal UserDetails userDetails){
@@ -70,7 +70,7 @@ public class FilmController {
         return "main";
     }
 
-    @GetMapping("/{genre}")
+    @GetMapping("/main/{genre}")
     public String mainPageByGenre(Model model,
                                   @RequestParam(name = "choose", defaultValue = "1") Integer choose,
                                   @PathVariable("genre") Genres genre,

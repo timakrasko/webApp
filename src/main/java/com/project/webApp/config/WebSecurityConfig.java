@@ -19,7 +19,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/*", "/users/*", "/films/*", "/img/**").permitAll()
+                        .requestMatchers("/*", "/main/*", "/users/*", "/films/*", "/img/**").permitAll()
                         .requestMatchers("/users/*/block", "/users/*/unblock", "/films/*/edit", "/films/*/delete", "films/new").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 );

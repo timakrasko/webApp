@@ -135,8 +135,11 @@ public class UserController {
         if(!user.getWatchedFilmList().containsKey(film))
             return "redirect:/films";
         userService.deleteFilmFromWatchedList(id, filmId);
-        film.setRating(filmService.avrRateFilm(filmId));
-        filmRepository.save(film);
+        int isMarksExist = filmService.checkIfFilmRateExistsInWatchedList(film.getId());
+        if(isMarksExist>0) {
+            film.setRating(filmService.avrRateFilm(filmId));
+            filmRepository.save(film);
+        }
         return "redirect:/films/" + filmId;
     }
     @PostMapping("{filmId}/add_to_planed_list")
