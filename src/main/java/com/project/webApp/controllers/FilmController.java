@@ -193,9 +193,13 @@ public class FilmController {
                 img.delete();
             }
         }
-        int filmExists = filmService.checkIfFilmExistsInWatchedList(id);
-        if (filmExists > 0) {
+        int filmExistsInWatchedList = filmService.checkIfFilmExistsInWatchedList(id);
+        int filmExistsInPlanedList = filmService.checkIfFilmExistsInPlanedList(id);
+        if (filmExistsInWatchedList > 0) {
             filmService.deleteFilmFromWatchList(id);
+        }
+        if (filmExistsInPlanedList > 0){
+            filmService.deleteFilmFromPlanList(id);
         }
         filmRepository.deleteById(id);
         return "redirect:/films";

@@ -27,11 +27,17 @@ public class FilmService {
     public void deleteFilmFromWatchList(Long id) {
         filmRepository.deleteFilmFromWatchedList(id);
     }
+    public void deleteFilmFromPlanList(Long id) {
+        filmRepository.deleteFilmFromPlanedList(id);
+    }
     public double avrRateFilm(Long id) {
         return filmRepository.getAverageFilmRating(id);
     }
     public int checkIfFilmExistsInWatchedList(Long id){
         return filmRepository.checkIfFilmExistsInWatchedList(id);
+    }
+    public int checkIfFilmExistsInPlanedList(Long id){
+        return filmRepository.checkIfFilmExistsInPlanedList(id);
     }
     public int checkIfFilmRateExistsInWatchedList(Long id){
         return filmRepository.checkIfFilmRateExistsInWatchedList(id);
