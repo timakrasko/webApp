@@ -23,7 +23,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/users/*/block", "/users/*/unblock", "/films/*/edit", "/films/*/delete", "films/new").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 );
-        http.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
+        http.formLogin(form -> form
+                .defaultSuccessUrl("/main", true)
+                .permitAll()
+        );
         http.logout(LogoutConfigurer::permitAll);
 
         return http.build();

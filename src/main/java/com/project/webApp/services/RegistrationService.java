@@ -2,13 +2,12 @@ package com.project.webApp.services;
 
 
 import com.project.webApp.models.ConfirmationToken;
-import com.project.webApp.models.RegistrationRequest;
+import com.project.webApp.models.RegistrationValidator;
 import com.project.webApp.models.Role;
 import com.project.webApp.models.User;
 import com.project.webApp.repository.ConfirmationTokenRepository;
 import com.project.webApp.utility.EmailSender;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +22,12 @@ public class RegistrationService {
     private final EmailSender emailSender;
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    public String register(RegistrationRequest request) {
+    public String register(RegistrationValidator validator) {
         String token = authenticationService.signUpUser(
                 new User(
-                        request.getUserName(),
-                        request.getEmail(),
-                        request.getPassword(),
+                        validator.getUserName(),
+                        validator.getEmail(),
+                        validator.getPassword(),
                         Role.USER
                 )
         );
@@ -37,8 +36,8 @@ public class RegistrationService {
 
         String link = "http://localhost:8080/confirm?token=" + token;
         emailSender.send(
-                request.getEmail(),
-                buildEmail(request.getUserName(), link));
+                validator.getEmail(),
+                buildEmail(validator.getUserName(), link));
 
         System.out.println("Email Sended");
 

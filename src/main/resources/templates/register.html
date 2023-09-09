@@ -7,7 +7,7 @@
 <body>
 <div class="container mt-4">
 <p style="color: green" th:if="${showEmailMessage}" th:text="'We sent the confirmation link to your email'"></p>
-<form th:method="POST" th:action="@{/register}" th:object="${request}">
+<form th:method="POST" th:action="@{/register}" th:object="${validator}">
 
   <p>User name: <input type="text" th:field="*{userName}" class="form-control w-25"></p>
   <div style="color: darkred" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>

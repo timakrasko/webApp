@@ -218,14 +218,14 @@ public class FilmController {
         return "redirect:/films/" + id;
     }
 
-    @PostMapping("/films/{id}/edit_comment")
-    public String editComment(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestParam String message,
-                              @PathVariable("id") Long id,
-                              Model model) {
-
-        return "redirect:/films/" + id;
-    }
+//    @PostMapping("/films/{id}/edit_comment")
+//    public String editComment(@AuthenticationPrincipal UserDetails userDetails,
+//                              @RequestParam String message,
+//                              @PathVariable("id") Long id,
+//                              Model model) {
+//
+//        return "redirect:/films/" + id;
+//    }
 
     @PostMapping("/films/{filmId}/delete_comment/{commentId}")
     public String deleteComment(@AuthenticationPrincipal UserDetails userDetails,

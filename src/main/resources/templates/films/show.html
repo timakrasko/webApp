@@ -57,14 +57,14 @@
     <hr>
     <div th:if="${comments}" th:each="comment: ${comments}">
         <a th:href="@{/users/{id}(id=${comment.author.getId()})}" th:text="${comment.author.getUsername}">VALUE</a>
-
+        <span th:text="' (' + ${comment.getSentAt()} + ') '"></span>
         <!--    DELETE/EDIT COMMENT-->
-        <!--    <form th:if="${isUserAdmin}" th:action="@{/films/{id}/edit_comment(id=${film.getId()})}" method="get">-->
-        <!--        <button type="submit">Edit comment</button>-->
-        <!--    </form>-->
         <form th:if="${isAuthenticated and comment.getAuthor().getId() == user.getId() or isUserAdmin}" th:action="@{/films/{filmId}/delete_comment/{commentId}(filmId=${film.getId()}, commentId=${comment.getId()})}" method="post" class="conteiner mt-2">
             <button type="submit">Delete comment</button>
         </form>
+<!--        <form th:if="${isUserAdmin}" th:action="@{/films/{id}/edit_comment(id=${film.getId()})}" method="get">-->
+<!--            <button type="submit">Edit comment</button>-->
+<!--        </form>-->
 
         <p th:text="${comment.message}">VALUE</p>
         <hr/>
