@@ -145,7 +145,6 @@ public class FilmController {
             film.setFilename(resultFilename);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date1 = dateFormat.parse(date);
         film.setReleaseDate(dateFormat.parse(date));
         filmRepository.save(film);
         return "redirect:/films";

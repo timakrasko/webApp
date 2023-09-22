@@ -26,8 +26,8 @@ public class Comment {
         sentAt = new Date();
     }
 
-    public String getSentAt() {
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm d MMMM yyyy");
-        return formatter.format(sentAt);
-    }
+//    public String getSentAt() {
+//        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm d MMMM yyyy");
+//        return formatter.format(sentAt);
+//    }
 }

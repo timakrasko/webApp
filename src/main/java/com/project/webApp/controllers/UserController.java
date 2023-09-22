@@ -68,7 +68,19 @@ public class UserController {
         model.addAttribute("isAnotherUserLocked", isAnotherUserLocked);
         model.addAttribute("isAnotherUserAdmin", isAnotherUserAdmin);
         model.addAttribute("anotherUser", anotherUser);
+        if (isItself)
+            return "users/my_page";
         return "users/show";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable("id") Long id,
+                       Model model,
+                       @AuthenticationPrincipal UserDetails userDetails){
+        User anotherUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        userService.addStartAttributesToModel(model, userDetails);
+        model.addAttribute("user", anotherUser);
+        return "users/edit";
     }
 
     @PostMapping("/{id}")

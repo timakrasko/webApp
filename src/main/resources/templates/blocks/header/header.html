@@ -28,17 +28,25 @@
                     </li>
 
                 </ul>
-                <form th:if="${isAuthenticated}" th:action="@{/customLogout}" method="post">
-                    <input class="form-control me-2" type="submit" value="Sign Out"/>
+                <li>
+                    <a th:if="${isAuthenticated}" th:href="@{/users/{id}(id=${user.getId()})}" th:text="${user.getUsername()}" style="color: white"></a>
+                </li>
+                <li>
+                    <a th:if="${isAuthenticated}" href="javascript:void(0);" onclick="submitForm()" style="color: white">Sign Out</a>
+                </li>
+                <form id="logoutForm" th:action="@{/customLogout}" method="post" style="display: none;">
                 </form>
+                <script>
+                    function submitForm() {
+                        document.getElementById('logoutForm').submit();
+                    }
+                </script>
                 <li>
                     <a th:if="!${isAuthenticated}" th:href="@{/login}" th:text="'Login'"  style="color: white"></a>
                 </li>
                 <li>
                     <a th:if="!${isAuthenticated}" th:href="@{/register}" th:text="'Reigistraion'" style="color: white"></a>
                 </li>
-
-<!--                <a th:href="@{/{id}(id = ${authenticatedUser.getId()})}" th:text="${authenticatedUser.getUsername()}"></a>-->
 
             </div>
         </div>
