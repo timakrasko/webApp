@@ -158,21 +158,23 @@ public class FilmController {
         return "films/edit";
     }
     @PostMapping("films/{id}")
-    public String update(@ModelAttribute("film") @Valid Film film,
+    public String update(@PathVariable("id") Long id,
+                         @ModelAttribute("film") @Valid Film updatedFilm,
                          @RequestParam("file") MultipartFile file,
                          @RequestParam("date") String date,
                          BindingResult bindingResult) throws IOException, ParseException {
         if (bindingResult.hasErrors())
             return "films/edit";
+        Film film = filmRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         if (file != null && !Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) {
-
             String uuidFile = UUID.randomUUID().toString();
             String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
             file.transferTo(new File(uploadPath + "/" + resultFilename));
-
             film.setFilename(resultFilename);
         }
+        film.setTitle(updatedFilm.getTitle());
+        film.setDescription(updatedFilm.getDescription());
+        film.setGenres(updatedFilm.getGenres());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         film.setReleaseDate(dateFormat.parse(date));
         int filmExists = filmService.checkIfFilmExistsInWatchedList(film.getId());

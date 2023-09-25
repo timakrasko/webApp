@@ -43,6 +43,7 @@ public class User implements UserDetails {
 //            joinColumns = @JoinColumn(name ="user_id"))
     @Enumerated(EnumType.STRING)
     private Role role;
+    private String filename;
 
     @ManyToMany
     @JoinTable(name = "user_friends",
