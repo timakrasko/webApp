@@ -11,6 +11,7 @@ import com.project.webApp.services.FilmService;
 import com.project.webApp.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -73,6 +74,7 @@ public class UserController {
         return "users/show";
     }
 
+    @PreAuthorize("isOwner(#id)")
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Long id,
                        Model model,

@@ -23,14 +23,12 @@ public class User implements UserDetails {
     @Column(unique = true,
             nullable = false)
     @NotEmpty
-//    @Length(min = 2, max = 20, message = "Wrong User name length")
     @Size(min = 2, max= 30, message = "Size of user name should be in range between 2 and 30")
     private String username;
 
     @Column(unique = true,
             nullable = false)
     @NotEmpty
-//    @Length(min = 2, max = 30, message = "Wrong email length")
     @Size(max= 40, message = "Size of email should be lower than 40")
     private String email;
 
@@ -38,9 +36,6 @@ public class User implements UserDetails {
     @NotEmpty
     private String password;
 
-//    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-//    @CollectionTable(name = "user_role",
-//            joinColumns = @JoinColumn(name ="user_id"))
     @Enumerated(EnumType.STRING)
     private Role role;
     private String filename;
